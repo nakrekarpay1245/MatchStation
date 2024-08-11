@@ -49,6 +49,9 @@ namespace _Game.Scripts.Items
             set => _itemDescription = value;
         }
 
+        private bool _collectable = true;
+        public bool Collectable { get => _collectable; private set => _collectable = value; }
+
         private Rigidbody _rigidbody;
 
         private void Awake()
@@ -61,21 +64,23 @@ namespace _Game.Scripts.Items
         /// </summary>
         public void Select()
         {
-            Debug.Log(name + "Selected!");
+            //Debug.Log(name + "Selected!");
             // Apply a scale effect using DOTween
             transform.DOScale(Vector3.one * 1.2f, 0.2f); // Scale up 
         }
 
         public void DeSelect()
         {
-            Debug.Log(name + "DeSelected!");
+            //Debug.Log(name + "DeSelected!");
             // Apply a scale effect using DOTween
             transform.DOScale(Vector3.one, 0.2f); // Scale back to original
         }
 
         public void Collect()
         {
-            Debug.Log(name + "Collected!");
+            _collectable = false;
+
+            //Debug.Log(name + "Collected!");
             // Apply a scale effect using DOTween
             // Scale back to original
             transform.DOScale(Vector3.one, 0.2f).OnComplete(() =>

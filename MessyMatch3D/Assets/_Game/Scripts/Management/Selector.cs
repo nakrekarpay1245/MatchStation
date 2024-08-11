@@ -1,21 +1,21 @@
 using _Game.Scripts._helpers;
 using _Game.Scripts.Items;
-using _Game.Scripts.Management;
+using _Game.Scripts.Tiles;
 using DG.Tweening;
 using UnityEngine;
 
-namespace _Game.Scripts.Manager
+namespace _Game.Scripts.Management
 {
     /// <summary>
     /// Handles the selection of items and their interaction.
     /// </summary>
     public class Selector : MonoBehaviour, ISelector, ICollector
     {
-        [Header("Selector Params")]
-        [SerializeField]
-        private string _selectParticleKey = "Select";
-        [SerializeField]
-        private string _selectClipKey = "Select";
+        //[Header("Selector Params")]
+        //[SerializeField]
+        //private string _selectParticleKey = "Select";
+        //[SerializeField]
+        //private string _selectClipKey = "Select";
 
         [Header("Camera Parameters")]
         [SerializeField]
@@ -91,8 +91,8 @@ namespace _Game.Scripts.Manager
                 Collect(_currentlySelectedItem);
             }
 
-            Debug.Log("Mouse button released. Last hovered item: " +
-                (_lastHoveredItem ? _lastHoveredItem.name : "None"));
+            //Debug.Log("Mouse button released. Last hovered item: " +
+            //    (_lastHoveredItem ? _lastHoveredItem.name : "None"));
         }
 
         private void CheckForItemAtMouse()
@@ -118,8 +118,9 @@ namespace _Game.Scripts.Manager
                     if (_isMouseHeld && _currentlySelectedItem != null)
                     {
                         DeSelect(_currentlySelectedItem);
+                        _currentlySelectedItem = null;
                     }
-                    Debug.Log("No item detected.");
+                    //Debug.Log("No item detected.");
                 }
             }
             else
@@ -127,6 +128,7 @@ namespace _Game.Scripts.Manager
                 if (_isMouseHeld && _currentlySelectedItem != null)
                 {
                     DeSelect(_currentlySelectedItem);
+                    _currentlySelectedItem = null;
                 }
             }
         }
@@ -153,7 +155,7 @@ namespace _Game.Scripts.Manager
         {
             Item item = collectable as Item;
 
-            if (item == null) return;
+            if (item == null && item.Collectable) return;
 
             // Find an empty tile and assign the item to it
             Tile emptyTile = GlobalBinder.singleton.TileManager.FindEmptyTile();
@@ -171,10 +173,11 @@ namespace _Game.Scripts.Manager
                 // Collect the item (optional)
                 item.Collect();
             }
-            else
-            {
-                Debug.Log("No empty tile available to place the item.");
-            }
+            //else
+            //{
+            //    Debug.Log("No empty tile available to place the item.");
+            //}
+            GlobalBinder.singleton.TileManager.AlignMatchingItems();
         }
 
         private void OnDrawGizmos()
@@ -185,7 +188,12 @@ namespace _Game.Scripts.Manager
             Vector3 rayDirection = _selectionCamera.ScreenPointToRay(Input.mousePosition).direction;
 
             // Draw raycast for different mouse states
-            if (Input.GetMouseButton(0))
+            if (Input.GetMouseButtonDown(0))
+            {
+                Gizmos.color = _mouseDownGizmoColor;
+                Gizmos.DrawRay(rayOrigin, rayDirection * _raycastLength);
+            }
+            else if (Input.GetMouseButton(0))
             {
                 Gizmos.color = _mouseHoldGizmoColor;
                 Gizmos.DrawRay(rayOrigin, rayDirection * _raycastLength);

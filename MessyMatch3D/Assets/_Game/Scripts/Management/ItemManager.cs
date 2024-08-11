@@ -100,7 +100,7 @@ namespace _Game.Scripts.Management
             if (requestedCount % 3 != 0)
             {
                 int adjustedCount = requestedCount + (3 - (requestedCount % 3));
-                Debug.LogWarning($"Item count adjusted to {adjustedCount} to be a multiple of 3.");
+                //Debug.LogWarning($"Item count adjusted to {adjustedCount} to be a multiple of 3.");
                 return adjustedCount;
             }
             return requestedCount;
