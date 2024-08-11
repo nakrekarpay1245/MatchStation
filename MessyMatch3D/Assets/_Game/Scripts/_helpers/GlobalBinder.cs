@@ -1,3 +1,4 @@
+using _Game.Scripts.Management;
 using UnityEngine;
 
 namespace _Game.Scripts._helpers
@@ -15,6 +16,9 @@ namespace _Game.Scripts._helpers
 
         [Header("PopUp")]
         public PopUpTextManager PopUpTextManager;
+
+        [Header("Tile")]
+        public TileManager TileManager;
 
         [Header("Time")]
         public TimeManager TimeManager;

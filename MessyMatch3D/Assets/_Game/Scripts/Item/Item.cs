@@ -49,6 +49,13 @@ namespace _Game.Scripts.Items
             set => _itemDescription = value;
         }
 
+        private Rigidbody _rigidbody;
+
+        private void Awake()
+        {
+            _rigidbody = GetComponent<Rigidbody>();
+        }
+
         /// <summary>
         /// Handles the selection of the item and applies a pop-up scale animation.
         /// </summary>
@@ -58,7 +65,7 @@ namespace _Game.Scripts.Items
             // Apply a scale effect using DOTween
             transform.DOScale(Vector3.one * 1.2f, 0.2f); // Scale up 
         }
-        
+
         public void DeSelect()
         {
             Debug.Log(name + "DeSelected!");
@@ -70,7 +77,11 @@ namespace _Game.Scripts.Items
         {
             Debug.Log(name + "Collected!");
             // Apply a scale effect using DOTween
-            transform.DOScale(Vector3.one, 0.2f); // Scale back to original
+            // Scale back to original
+            transform.DOScale(Vector3.one, 0.2f).OnComplete(() =>
+            {
+                _rigidbody.isKinematic = true;
+            });
         }
     }
 }

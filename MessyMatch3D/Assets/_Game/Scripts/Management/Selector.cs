@@ -1,6 +1,8 @@
+using _Game.Scripts._helpers;
 using _Game.Scripts.Items;
+using _Game.Scripts.Management;
+using DG.Tweening;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace _Game.Scripts.Manager
 {
@@ -49,9 +51,6 @@ namespace _Game.Scripts.Manager
             HandleMouseInput();
         }
 
-        /// <summary>
-        /// Handles mouse input for item selection.
-        /// </summary>
         private void HandleMouseInput()
         {
             if (Input.GetMouseButtonDown(0))
@@ -68,18 +67,12 @@ namespace _Game.Scripts.Manager
             }
         }
 
-        /// <summary>
-        /// Handles the mouse button down event for item selection.
-        /// </summary>
         private void HandleMouseButtonDown()
         {
             _isMouseHeld = true;
             CheckForItemAtMouse();
         }
 
-        /// <summary>
-        /// Handles the mouse button input during item selection.
-        /// </summary>
         private void HandleMouseButton()
         {
             if (_isMouseHeld)
@@ -88,9 +81,6 @@ namespace _Game.Scripts.Manager
             }
         }
 
-        /// <summary>
-        /// Handles the mouse button up event, selecting the item and applying the pop-up effect.
-        /// </summary>
         private void HandleMouseButtonUp()
         {
             _isMouseHeld = false;
@@ -105,9 +95,6 @@ namespace _Game.Scripts.Manager
                 (_lastHoveredItem ? _lastHoveredItem.name : "None"));
         }
 
-        /// <summary>
-        /// Checks for an item at the mouse position and logs the item name if found.
-        /// </summary>
         private void CheckForItemAtMouse()
         {
             if (_selectionCamera == null) return;
@@ -144,10 +131,6 @@ namespace _Game.Scripts.Manager
             }
         }
 
-        /// <summary>
-        /// Selects the item and applies its selection behavior.
-        /// </summary>
-        /// <param name="selectable">The item to be selected.</param>
         public void Select(ISelectable selectable)
         {
             Item item = selectable as Item;
@@ -157,10 +140,6 @@ namespace _Game.Scripts.Manager
             _currentlySelectedItem.Select();
         }
 
-        /// <summary>
-        /// Deselects the currently selected item.
-        /// </summary>
-        /// <param name="item">The item to be deselected.</param>
         public void DeSelect(ISelectable selectable)
         {
             Item item = selectable as Item;
@@ -170,22 +149,34 @@ namespace _Game.Scripts.Manager
             item.DeSelect();
         }
 
-        /// <summary>
-        /// Collects the item and applies its collection behavior.
-        /// </summary>
-        /// <param name="item">The item to be collected.</param>
         public void Collect(ICollectable collectable)
         {
             Item item = collectable as Item;
 
             if (item == null) return;
 
-            item.Collect();
+            // Find an empty tile and assign the item to it
+            Tile emptyTile = GlobalBinder.singleton.TileManager.FindEmptyTile();
+            if (emptyTile != null)
+            {
+                // Update tile and item references
+                emptyTile.Item = item;
+                item.transform.position = emptyTile.transform.position;
+                item.transform.rotation = Quaternion.identity; // Reset rotation to (0,0,0)
+
+                // Optionally, animate item to move to the tile's position using DOTween
+                item.transform.DOMove(emptyTile.transform.position + Vector3.up, 0.5f);
+                item.transform.DORotate(Vector3.zero, 0.5f);
+
+                // Collect the item (optional)
+                item.Collect();
+            }
+            else
+            {
+                Debug.Log("No empty tile available to place the item.");
+            }
         }
 
-        /// <summary>
-        /// Draws a visual representation of the raycast in the Unity Editor using Gizmos.
-        /// </summary>
         private void OnDrawGizmos()
         {
             if (_selectionCamera == null) return;
