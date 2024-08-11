@@ -11,6 +11,9 @@ namespace _Game.Scripts._helpers
         [Header("Coin")]
         public CoinManager CoinManager;
 
+        [Header("Level")]
+        public LevelManager LevelManager;
+
         [Header("Particle")]
         public ParticleManager ParticleManager;
 

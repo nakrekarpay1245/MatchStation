@@ -177,11 +177,15 @@ namespace _Game.Scripts.Management
 
                 // Collect the item (optional)
                 item.Collect();
+
+                GlobalBinder.singleton.LevelManager.UpdateItemCollection(item);
             }
-            //else
-            //{
-            //    Debug.Log("No empty tile available to place the item.");
-            //}
+            else
+            {
+                Debug.Log("No empty tile available to place the item.");
+                GlobalBinder.singleton.LevelManager.LevelFail();
+            }
+
             GlobalBinder.singleton.TileManager.AlignMatchingItems();
         }
 
