@@ -1646,7 +1646,9 @@ MonoBehaviour:
   - {fileID: 1407165546}
   - {fileID: 1940840206}
   - {fileID: 1990287022}
-  _itemMoveDuration: 0.5
+  _itemMoveDuration: 0.25
+  _matchMoveAnimationDuration: 0.3
+  _matchScaleAnimationDuration: 0.125
 --- !u!114 &1739847986 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2242584232014739553, guid: f043ede2293358742924a3c4e2e35fe2,
@@ -1703,7 +1705,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c508cef0b3d3ed34fafeabaa5a960896, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _itemCreationInterval: 0.069
+  _itemCreationInterval: 0.01
   _itemCreationDataList:
   - ItemPrefab: {fileID: 8000916057872767899, guid: 86628fe099557604eb47c65192cb0247,
       type: 3}
@@ -1952,6 +1954,7 @@ MonoBehaviour:
   _mouseDownGizmoColor: {r: 0, g: 1, b: 0, a: 1}
   _mouseHoldGizmoColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   _mouseUpGizmoColor: {r: 1, g: 0, b: 0, a: 1}
+  _itemMoveDuration: 0.5
 --- !u!4 &2065229849
 Transform:
   m_ObjectHideFlags: 0
@@ -2169,5 +2172,5 @@ SceneRoots:
   - {fileID: 591742807}
   - {fileID: 1927993579}
   - {fileID: 689825100}
-  - {fileID: 2065229849}
   - {fileID: 2079531627}
+  - {fileID: 2065229849}

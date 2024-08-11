@@ -42,6 +42,11 @@ namespace _Game.Scripts.Management
         [SerializeField]
         private Color _mouseUpGizmoColor = Color.red;
 
+        [Header("Item Move Settings")]
+        [Tooltip("Duration for items to move to their new positions.")]
+        [SerializeField]
+        private float _itemMoveDuration = 0.5f;
+
         private bool _isMouseHeld = false;
         private Item _lastHoveredItem;
         private Item _currentlySelectedItem;
@@ -163,12 +168,12 @@ namespace _Game.Scripts.Management
             {
                 // Update tile and item references
                 emptyTile.Item = item;
-                item.transform.position = emptyTile.transform.position;
-                item.transform.rotation = Quaternion.identity; // Reset rotation to (0,0,0)
+                //item.transform.position = emptyTile.transform.position;
+                //item.transform.rotation = Quaternion.identity; // Reset rotation to (0,0,0)
 
-                // Optionally, animate item to move to the tile's position using DOTween
-                item.transform.DOMove(emptyTile.transform.position + Vector3.up, 0.5f);
-                item.transform.DORotate(Vector3.zero, 0.5f);
+                //// Optionally, animate item to move to the tile's position using DOTween
+                //item.transform.DOMove(emptyTile.transform.position + Vector3.up, _itemMoveDuration);
+                item.transform.DORotate(Vector3.zero, _itemMoveDuration);
 
                 // Collect the item (optional)
                 item.Collect();
