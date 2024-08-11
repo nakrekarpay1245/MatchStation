@@ -1412,6 +1412,61 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1927993579}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2065229847
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2065229849}
+  - component: {fileID: 2065229848}
+  m_Layer: 0
+  m_Name: Selector
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2065229848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2065229847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5cc3a2e57e9f2342a76e6d08241c23f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _selectParticleKey: Select
+  _selectClipKey: Select
+  _selectionCamera: {fileID: 330585545}
+  _sphereCastLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  _sphereCastRadius: 1
+  _sphereCastLength: 100
+  _mouseDownGizmoColor: {r: 0, g: 1, b: 0, a: 1}
+  _mouseHoldGizmoColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  _mouseUpGizmoColor: {r: 1, g: 0, b: 0, a: 1}
+--- !u!4 &2065229849
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2065229847}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1422,3 +1477,4 @@ SceneRoots:
   - {fileID: 591742807}
   - {fileID: 1927993579}
   - {fileID: 689825100}
+  - {fileID: 2065229849}

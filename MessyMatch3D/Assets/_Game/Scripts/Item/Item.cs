@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 
 namespace _Game.Scripts.Items
@@ -5,15 +6,13 @@ namespace _Game.Scripts.Items
     /// <summary>
     /// Represents an item in the game. This class encapsulates the item's ID, icon, and description.
     /// </summary>
-    public class Item : MonoBehaviour
+    public class Item : MonoBehaviour, ISelectable, ICollectable
     {
-        // Private fields
         [Header("Item Properties")]
         [Tooltip("Unique identifier for the item.")]
         [SerializeField]
         private int _itemId;
 
-        // Encapsulated properties
         /// <summary>
         /// Gets the unique identifier for the item.
         /// </summary>
@@ -48,6 +47,30 @@ namespace _Game.Scripts.Items
         {
             get => _itemDescription;
             set => _itemDescription = value;
+        }
+
+        /// <summary>
+        /// Handles the selection of the item and applies a pop-up scale animation.
+        /// </summary>
+        public void Select()
+        {
+            Debug.Log(name + "Selected!");
+            // Apply a scale effect using DOTween
+            transform.DOScale(Vector3.one * 1.2f, 0.2f); // Scale up 
+        }
+        
+        public void DeSelect()
+        {
+            Debug.Log(name + "DeSelected!");
+            // Apply a scale effect using DOTween
+            transform.DOScale(Vector3.one, 0.2f); // Scale back to original
+        }
+
+        public void Collect()
+        {
+            Debug.Log(name + "Collected!");
+            // Apply a scale effect using DOTween
+            transform.DOScale(Vector3.one, 0.2f); // Scale back to original
         }
     }
 }
