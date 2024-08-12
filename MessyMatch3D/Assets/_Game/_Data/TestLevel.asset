@@ -18,17 +18,17 @@ MonoBehaviour:
   ItemDataList:
   - ItemPrefab: {fileID: 8000916057872767899, guid: 86628fe099557604eb47c65192cb0247,
       type: 3}
-    ItemCount: 3
+    ItemCount: 12
     IsRequired: 1
   - ItemPrefab: {fileID: 1215803932127311526, guid: 0afabed72162b794f9f2dce6680152ea,
       type: 3}
-    ItemCount: 3
+    ItemCount: 12
     IsRequired: 0
   - ItemPrefab: {fileID: 1215803932127311526, guid: 4c819dfa2db695c48adad15e1f4e77af,
       type: 3}
-    ItemCount: 3
+    ItemCount: 12
     IsRequired: 0
   - ItemPrefab: {fileID: 1215803932127311526, guid: dca020950f857064caee006b356b7ecb,
       type: 3}
-    ItemCount: 3
+    ItemCount: 12
     IsRequired: 0

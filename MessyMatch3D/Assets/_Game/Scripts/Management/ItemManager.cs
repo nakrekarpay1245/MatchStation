@@ -287,6 +287,8 @@ namespace _Game.Scripts.Management
             // Deactivate the items
             foreach (var item in itemsToDeactivate)
             {
+                GlobalBinder.singleton.LevelManager.UpdateItemCollection(item);
+
                 item.gameObject.SetActive(false);
                 _activeItems.Remove(item);
                 _activeRequireItems.Remove(item);

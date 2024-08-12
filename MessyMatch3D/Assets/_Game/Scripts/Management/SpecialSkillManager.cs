@@ -1,4 +1,5 @@
 using _Game.Scripts._helpers;
+using DG.Tweening;
 using UnityEngine;
 
 namespace _Game.Scripts.Management
@@ -13,6 +14,15 @@ namespace _Game.Scripts.Management
         [Tooltip("Button to trigger the Item Shaker skill.")]
         [SerializeField]
         private LeafButton _itemShakerButton;
+        [SerializeField]
+        private Transform _itemShaker;
+
+        [SerializeField]
+        private float _shakerMovementDuration = 0.5f;
+        [SerializeField]
+        private float _shakerRotationDuration = 0.5f;
+        [SerializeField]
+        private float _shakerHeightChangeAmount = 2f;
 
         [Tooltip("Button to trigger the Recycle Item skill.")]
         [SerializeField]
@@ -56,8 +66,34 @@ namespace _Game.Scripts.Management
         /// </summary>
         private void ItemShaker()
         {
-            // Implement the logic to shake and shuffle items on the board
+            // Log the activation of the skill
             Debug.Log("ItemShaker skill activated.");
+
+            // Set up the rotation parameters
+            Vector3 rotation = new Vector3(0, 360, 0); // Rotate around Y-axis
+
+            // Create a sequence for the shaking animation
+            Sequence shakerSequence = DOTween.Sequence();
+
+            // Add a vertical movement up
+            shakerSequence.Append(_itemShaker.transform.DOMoveY(_itemShaker.transform.position.y +
+                _shakerHeightChangeAmount, _shakerMovementDuration).SetEase(Ease.Linear));
+
+            // Add a rotation
+            shakerSequence.Join(_itemShaker.transform.DORotate(rotation, _shakerRotationDuration,
+                RotateMode.LocalAxisAdd).SetEase(Ease.Linear));
+
+            // Add a rotation
+            shakerSequence.Append(_itemShaker.transform.DORotate(rotation, _shakerRotationDuration,
+                RotateMode.LocalAxisAdd).SetEase(Ease.Linear));
+
+            // Add a vertical movement down
+            shakerSequence.Append(_itemShaker.transform.DOMoveY(_itemShaker.transform.position.y,
+                _shakerMovementDuration).SetEase(Ease.Linear));
+
+            // Add a rotation
+            shakerSequence.Join(_itemShaker.transform.DORotate(rotation, _shakerRotationDuration,
+                RotateMode.LocalAxisAdd).SetEase(Ease.Linear));
         }
 
         /// <summary>
