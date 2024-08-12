@@ -112,11 +112,11 @@ namespace _Game.Scripts.Management
                 _matchMoveAnimationDuration).SetEase(Ease.OutQuad));
 
             // Move items towards the forward
-            sequence.Append(item1.transform.DOMoveZ(tile1.transform.position.z + 1,
+            sequence.Append(item1.transform.DOMoveZ(tile1.transform.position.z + 2,
                 _matchMoveAnimationDuration).SetEase(Ease.OutQuad));
-            sequence.Join(item2.transform.DOMoveZ(tile2.transform.position.z + 1,
+            sequence.Join(item2.transform.DOMoveZ(tile2.transform.position.z + 2,
                 _matchMoveAnimationDuration).SetEase(Ease.OutQuad));
-            sequence.Join(item3.transform.DOMoveZ(tile3.transform.position.z + 1,
+            sequence.Join(item3.transform.DOMoveZ(tile3.transform.position.z + 2,
                 _matchMoveAnimationDuration).SetEase(Ease.OutQuad));
 
             // Move items towards the center and apply a scale down effect
