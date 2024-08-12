@@ -8,6 +8,9 @@ namespace _Game.Scripts._helpers
         [Header("Audio")]
         public AudioManager AudioManager;
 
+        [Header("Item")]
+        public ItemManager ItemManager;
+
         [Header("Level")]
         public LevelManager LevelManager;
 

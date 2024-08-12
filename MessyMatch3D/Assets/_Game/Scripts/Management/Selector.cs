@@ -148,6 +148,7 @@ namespace _Game.Scripts.Management
                 item.transform.DORotate(Vector3.zero, _itemMoveDuration);
                 item.Collect();
                 GlobalBinder.singleton.LevelManager.UpdateItemCollection(item);
+                GlobalBinder.singleton.ItemManager.CollectItem(item);
             }
             else
             {

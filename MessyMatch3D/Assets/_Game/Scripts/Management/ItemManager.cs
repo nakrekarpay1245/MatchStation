@@ -1,61 +1,63 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 using _Game.Scripts.Items;
-using _Game.Scripts._Data;
+using _Game.Scripts.Data;
+using System.Linq; // DOTween namespace
 
 namespace _Game.Scripts.Management
 {
     /// <summary>
-    /// Manages the creation of items at specified intervals and ensures that items are created in multiples of three.
+    /// Manages the creation and management of items in the game.
+    /// Ensures items are created at specified intervals and in multiples of three.
     /// </summary>
     public class ItemManager : MonoBehaviour
     {
-        [Header("Level Config")]
+        [Header("Level Configuration")]
         [SerializeField]
         private LevelConfig _levelConfig;
 
+        [Header("Item Lists")]
+        [SerializeField]
+        private List<Item> _generatedItems = new List<Item>();
+        [SerializeField]
+        private List<Item> _activeItems = new List<Item>();
+        [SerializeField]
+        private List<Item> _collectedItems = new List<Item>();
+
         [Header("Item Creation Settings")]
-        [Tooltip("The time interval (in seconds) between creating each item.")]
+        [Tooltip("Time interval between creating each item.")]
         [SerializeField, Range(0.01f, 1f)]
         private float _itemCreationInterval = 0.1f;
 
         [Header("Spawn Area Settings")]
-        [Tooltip("Minimum horizontal spawn position.")]
+        [Tooltip("Minimum and maximum spawn positions on the horizontal axis.")]
         [SerializeField]
         private float _minHorizontalPosition = -5f;
-
-        [Tooltip("Maximum horizontal spawn position.")]
         [SerializeField]
         private float _maxHorizontalPosition = 5f;
-
-        [Tooltip("Minimum vertical spawn position.")]
+        [Tooltip("Minimum and maximum spawn positions on the vertical axis.")]
         [SerializeField]
         private float _minVerticalPosition = -5f;
-
-        [Tooltip("Maximum vertical spawn position.")]
         [SerializeField]
         private float _maxVerticalPosition = 5f;
 
-        [Header("Spawn Height Settings")]
-        [Tooltip("Generation Height")]
+        [Header("Spawn Height")]
+        [Tooltip("Height at which items are spawned.")]
         [SerializeField]
-        private float _generationHeight = 1f;
-
-        private int _currentItemSet = 1;
+        private float _spawnHeight = 1f;
 
         private void Start()
         {
-            // Start the item creation process
             StartCoroutine(CreateItemsRoutine());
         }
 
         /// <summary>
-        /// Coroutine that handles the random creation of items based on the specified interval.
+        /// Coroutine to handle the creation of items at intervals.
         /// </summary>
         private IEnumerator CreateItemsRoutine()
         {
-            // Create a list to track how many items have been created from each data entry
             List<int> createdItemsCount = new List<int>();
             foreach (var itemData in _levelConfig.ItemDataList)
             {
@@ -70,7 +72,6 @@ namespace _Game.Scripts.Management
 
             for (int i = 1; i <= totalItemsToCreate; i++)
             {
-                // Randomly select an item data entry that hasn't reached its creation limit
                 int randomIndex;
                 do
                 {
@@ -78,53 +79,68 @@ namespace _Game.Scripts.Management
                 }
                 while (createdItemsCount[randomIndex] >= GetValidatedItemCount(_levelConfig.ItemDataList[randomIndex].ItemCount));
 
-                // Create the item
                 CreateItem(_levelConfig.ItemDataList[randomIndex].ItemPrefab, createdItemsCount[randomIndex] + 1);
-
-                // Increment the count for this item data entry
                 createdItemsCount[randomIndex]++;
 
                 yield return new WaitForSeconds(_itemCreationInterval);
             }
-
-            _currentItemSet++;
         }
 
         /// <summary>
-        /// Ensures that the item count is a multiple of three, adjusting if necessary.
+        /// Validates item count to ensure it's a multiple of three.
         /// </summary>
-        /// <param name="requestedCount">The originally requested item count.</param>
-        /// <returns>The adjusted item count, which will be a multiple of three.</returns>
+        /// <param name="requestedCount">The initially requested item count.</param>
+        /// <returns>Adjusted item count, which is a multiple of three.</returns>
         private int GetValidatedItemCount(int requestedCount)
         {
-            if (requestedCount % 3 != 0)
-            {
-                int adjustedCount = requestedCount + (3 - (requestedCount % 3));
-                //Debug.LogWarning($"Item count adjusted to {adjustedCount} to be a multiple of 3.");
-                return adjustedCount;
-            }
-            return requestedCount;
+            return (requestedCount + 2) / 3 * 3; // Simplified adjustment
         }
 
         /// <summary>
         /// Creates an item and assigns it a unique name based on the current item set and item number.
         /// </summary>
-        /// <param name="itemPrefab">The item to create.</param>
-        /// <param name="itemNumber">The number of the item in the current set.</param>
+        /// <param name="itemPrefab">The prefab of the item to create.</param>
+        /// <param name="itemNumber">The item's number in the current set.</param>
         private void CreateItem(Item itemPrefab, int itemNumber)
         {
-            // Generate a random position within the specified bounds
             Vector3 spawnPosition = new Vector3(
                 Random.Range(_minHorizontalPosition, _maxHorizontalPosition),
-                _generationHeight,
+                _spawnHeight,
                 Random.Range(_minVerticalPosition, _maxVerticalPosition)
             );
 
-            // Instantiate and animate the item
             Item newItem = Instantiate(itemPrefab, spawnPosition, Quaternion.identity, transform);
-            newItem.name = $"{itemPrefab.GetType().Name}_{_currentItemSet}_{itemNumber}";
+            newItem.name = $"{itemPrefab.GetType().Name}_{itemNumber}";
 
-            // Additional initialization for the item if needed
+            _generatedItems.Add(newItem);
+            _activeItems.Add(newItem);
+
+            // Optional: Animate item creation with DOTween
+            newItem.transform.DOScale(Vector3.one, _itemCreationInterval);
+        }
+
+        /// <summary>
+        /// Collects an item, moving it from the active list to the collected list.
+        /// </summary>
+        /// <param name="collectedItem">The item to be collected.</param>
+        public void CollectItem(Item collectedItem)
+        {
+            if (_activeItems.Remove(collectedItem))
+            {
+                _collectedItems.Add(collectedItem);
+            }
+        }
+
+        /// <summary>
+        /// Recycles an item, moving it from the collected list back to the active list.
+        /// </summary>
+        /// <param name="recycledItem">The item to be recycled.</param>
+        public void RecycleItem(Item recycledItem)
+        {
+            if (_collectedItems.Remove(recycledItem))
+            {
+                _activeItems.Add(recycledItem);
+            }
         }
 
         /// <summary>
@@ -134,12 +150,17 @@ namespace _Game.Scripts.Management
         {
             Gizmos.color = Color.green;
 
-            // Draw the rectangular spawn area based on the min and max values
             Gizmos.DrawWireCube(
-                new Vector3((_minHorizontalPosition + _maxHorizontalPosition) / 2f, 0f,
-                            (_minVerticalPosition + _maxVerticalPosition) / 2f),
-                new Vector3(_maxHorizontalPosition - _minHorizontalPosition, 1f,
-                            _maxVerticalPosition - _minVerticalPosition)
+                new Vector3(
+                    (_minHorizontalPosition + _maxHorizontalPosition) / 2f,
+                    0f,
+                    (_minVerticalPosition + _maxVerticalPosition) / 2f
+                ),
+                new Vector3(
+                    _maxHorizontalPosition - _minHorizontalPosition,
+                    1f,
+                    _maxVerticalPosition - _minVerticalPosition
+                )
             );
         }
     }

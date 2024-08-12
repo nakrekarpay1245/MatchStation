@@ -3297,12 +3297,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _levelConfig: {fileID: 11400000, guid: 93bcb47e3fa51504e9b53893ddd48bdd, type: 2}
+  _generatedItems: []
+  _activeItems: []
+  _collectedItems: []
   _itemCreationInterval: 0.01
   _minHorizontalPosition: -3
   _maxHorizontalPosition: 3
   _minVerticalPosition: -3
   _maxVerticalPosition: 3
-  _generationHeight: 1
+  _spawnHeight: 1
 --- !u!1 &1927993577
 GameObject:
   m_ObjectHideFlags: 0
@@ -3333,6 +3336,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AudioManager: {fileID: 767483034}
+  ItemManager: {fileID: 1844991212}
   LevelManager: {fileID: 403474425}
   ParticleManager: {fileID: 2028953737}
   PopUpTextManager: {fileID: 0}

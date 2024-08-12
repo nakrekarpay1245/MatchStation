@@ -3,8 +3,7 @@ using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using _Game.Scripts.Items;
 using UnityEngine.Events;
-using _Game.Scripts._Data;
-using DG.Tweening;
+using _Game.Scripts.Data;
 using _Game.Scripts._helpers; // DOTween kütüphanesi için
 
 namespace _Game.Scripts.Management
