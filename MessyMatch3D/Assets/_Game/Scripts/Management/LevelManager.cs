@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using _Game.Scripts.Items;
 using UnityEngine.Events;
 using _Game.Scripts._Data;
-using DG.Tweening; // DOTween kütüphanesi için
+using DG.Tweening;
+using _Game.Scripts._helpers; // DOTween kütüphanesi için
 
 namespace _Game.Scripts.Management
 {
@@ -18,9 +19,6 @@ namespace _Game.Scripts.Management
         [Header("Level Configuration")]
         [Tooltip("Reference to the level configuration.")]
         [SerializeField] private LevelConfig _levelConfig;
-
-        private float _currentLevelTime;
-        private bool _isTimerRunning;
 
         [Header("Indicator Settings")]
         [Tooltip("Parent object for the item indicators.")]
@@ -36,15 +34,14 @@ namespace _Game.Scripts.Management
 
         private int _currentLevelIndex = 0;
 
-        public UnityAction<float, float> OnTimerUpdated;
         public UnityAction OnLevelFailed;
         public UnityAction OnLevelCompleted;
 
         private void Start()
         {
-            StartTimer(_levelConfig.InitialTime);
-
             CreateItemIndicators();
+
+            GlobalBinder.singleton.TimeManager.OnTimeFinished += LevelFail;
         }
 
         private void CreateItemIndicators()
@@ -72,73 +69,6 @@ namespace _Game.Scripts.Management
                     _requiredItemCounts[itemData.ItemPrefab.ItemId] = itemData.ItemCount;
                 }
             }
-        }
-
-        /// <summary>
-        /// Starts the timer with a specified time.
-        /// </summary>
-        /// <param name="timeInSeconds">The time to start the timer with, in seconds.</param>
-        public void StartTimer(float timeInSeconds)
-        {
-            _currentLevelTime = timeInSeconds;
-            _isTimerRunning = true;
-
-            OnTimerUpdated?.Invoke(_currentLevelTime, _levelConfig.CriticalTimeThreshold);
-
-            InvokeRepeating(nameof(UpdateTimer), _levelConfig.UpdateInterval, _levelConfig.UpdateInterval);
-        }
-
-        /// <summary>
-        /// Updates the timer every second.
-        /// </summary>
-        private void UpdateTimer()
-        {
-            if (!_isTimerRunning) return;
-
-            _currentLevelTime -= _levelConfig.UpdateInterval;
-            if (_currentLevelTime <= 0)
-            {
-                _currentLevelTime = 0;
-                _isTimerRunning = false;
-                CancelInvoke(nameof(UpdateTimer));
-                LevelFail();
-            }
-
-            OnTimerUpdated?.Invoke(_currentLevelTime, _levelConfig.CriticalTimeThreshold);
-        }
-
-        /// <summary>
-        /// Adds extra time to the current timer.
-        /// </summary>
-        /// <param name="extraTimeInSeconds">The additional time to add, in seconds.</param>
-        public void AddExtraTime(float extraTimeInSeconds)
-        {
-            _currentLevelTime += extraTimeInSeconds;
-            if (!_isTimerRunning)
-            {
-                _isTimerRunning = true;
-                InvokeRepeating(nameof(UpdateTimer), _levelConfig.UpdateInterval, _levelConfig.UpdateInterval);
-            }
-
-            OnTimerUpdated?.Invoke(_currentLevelTime, _levelConfig.CriticalTimeThreshold);
-        }
-
-        /// <summary>
-        /// Stops the timer.
-        /// </summary>
-        public void StopTimer()
-        {
-            _isTimerRunning = false;
-            CancelInvoke(nameof(UpdateTimer));
-        }
-
-        /// <summary>
-        /// Resets the timer to the initial time.
-        /// </summary>
-        public void ResetTimer()
-        {
-            StopTimer();
-            StartTimer(_levelConfig.InitialTime);
         }
 
         /// <summary>

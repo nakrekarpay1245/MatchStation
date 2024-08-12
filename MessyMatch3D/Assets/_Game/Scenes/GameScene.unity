@@ -367,55 +367,6 @@ MonoBehaviour:
   _transitionDuration: 0.25
   _buttonPressClipKey: ButtonPressClip
   _buttonHoverClipKey: ButtonHoverClip
---- !u!1 &161569232
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 161569234}
-  - component: {fileID: 161569233}
-  m_Layer: 0
-  m_Name: PopUpTextManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &161569233
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 161569232}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a607e16a345cb85419ca054fd5595c1c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _popUpTextPrefab: {fileID: 0}
-  _poolSize: 10
-  _positionRandomizer: 0.1
-  _verticalPositionOverride: 0.25
-  _popUpTextScale: {x: 0, y: 0, z: 0}
---- !u!4 &161569234
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 161569232}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1927993579}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &253320489
 GameObject:
   m_ObjectHideFlags: 0
@@ -1436,14 +1387,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _levelConfig: {fileID: 11400000, guid: 93bcb47e3fa51504e9b53893ddd48bdd, type: 2}
-  _tutorial: {fileID: 0}
   _indicatorsParent: {fileID: 301109651}
   _indicatorPrefab: {fileID: 6255623286210125375, guid: ac02d2be35a279d48be4287acbdf7028,
     type: 3}
-  _itemRequirements:
-  - Item: {fileID: 8000916057872767899, guid: 86628fe099557604eb47c65192cb0247, type: 3}
-    Quantity: 3
-  _requireItems: []
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -1810,19 +1756,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90ff9380f16b93f429685764077ff08b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _uiDelay: 0.125
-  _popUpTextAnimationDuration: 0.5
-  _popUpTextAnimationDelay: 0.25
-  _bulletArriveTime: 0.125
-  _damagableDestroyDelay: 1
-  _damagableScaleChangeTime: 1
-  _menuAnimationDuration: 0.15
-  _menuAnimationDelay: 0.05
-  _hitMaterialChangeInterval: 0.15
-  _startDropDownDuration: 1
-  _startDropDownDelay: 0.25
-  _startScaleUpDuration: 1
-  _startScaleUpDelay: 0.25
+  _levelConfig: {fileID: 11400000, guid: 93bcb47e3fa51504e9b53893ddd48bdd, type: 2}
 --- !u!4 &755733575
 Transform:
   m_ObjectHideFlags: 0
@@ -2414,53 +2348,6 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!1 &1550238444
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1550238446}
-  - component: {fileID: 1550238445}
-  m_Layer: 0
-  m_Name: CoinManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &1550238445
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1550238444}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2b298cc213ba6bc42b1620d10fcce96c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _coinPrefab: {fileID: 0}
-  _animationDuration: 0.5
-  _collectPoint: {fileID: 0}
---- !u!4 &1550238446
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1550238444}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1927993579}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1594171991
 GameObject:
   m_ObjectHideFlags: 0
@@ -3446,10 +3333,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AudioManager: {fileID: 767483034}
-  CoinManager: {fileID: 1550238445}
   LevelManager: {fileID: 403474425}
   ParticleManager: {fileID: 2028953737}
-  PopUpTextManager: {fileID: 161569233}
+  PopUpTextManager: {fileID: 0}
   TileManager: {fileID: 1738542252}
   TimeManager: {fileID: 755733574}
 --- !u!4 &1927993579
@@ -3466,9 +3352,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 767483035}
-  - {fileID: 1550238446}
   - {fileID: 2028953738}
-  - {fileID: 161569234}
   - {fileID: 755733575}
   - {fileID: 2123970375}
   m_Father: {fileID: 0}

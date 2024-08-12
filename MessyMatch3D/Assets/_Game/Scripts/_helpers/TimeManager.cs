@@ -1,108 +1,92 @@
+using _Game.Scripts._Data;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace _Game.Scripts._helpers
 {
     public class TimeManager : MonoSingleton<TimeManager>
     {
-        [Header(("Time Parameters"))]
-        [Header(("UI Parameters"))]
-        [SerializeField]
-        private float _uiDelay = 0.125f;
-        public float UiDelay { get => _uiDelay; private set => _uiDelay = value; }
+        [Header("TimeManager Parameters")]
+        [Header("Level Configuration")]
+        [Tooltip("Reference to the level configuration.")]
+        [SerializeField] private LevelConfig _levelConfig;
 
-        [Header(("PopUp Parameters"))]
-        [SerializeField]
-        private float _popUpTextAnimationDuration = 0.5f;
-        public float PopUpTextAnimationDuration
+        private float _currentLevelTime;
+        private bool _isTimerRunning;
+
+        public UnityAction<float, float> OnTimerUpdated;
+        public UnityAction OnTimeFinished;
+        private void Start()
         {
-            get => _popUpTextAnimationDuration;
-            private set => _popUpTextAnimationDuration = value;
+            StartTimer(_levelConfig.InitialTime);
+        }
+        /// <summary>
+        /// Starts the timer with a specified time.
+        /// </summary>
+        /// <param name="timeInSeconds">The time to start the timer with, in seconds.</param>
+        public void StartTimer(float timeInSeconds)
+        {
+            _currentLevelTime = timeInSeconds;
+            _isTimerRunning = true;
+
+            OnTimerUpdated?.Invoke(_currentLevelTime, _levelConfig.CriticalTimeThreshold);
+
+            InvokeRepeating(nameof(UpdateTimer), _levelConfig.UpdateInterval, _levelConfig.UpdateInterval);
         }
 
-        [SerializeField]
-        private float _popUpTextAnimationDelay = 0.25f;
-        public float PopUpTextAnimationDelay
+        /// <summary>
+        /// Updates the timer every second.
+        /// </summary>
+        private void UpdateTimer()
         {
-            get => _popUpTextAnimationDelay;
-            private set => _popUpTextAnimationDelay = value;
+            if (!_isTimerRunning) return;
+
+            _currentLevelTime -= _levelConfig.UpdateInterval;
+            if (_currentLevelTime <= 0)
+            {
+                _currentLevelTime = 0;
+                _isTimerRunning = false;
+                CancelInvoke(nameof(UpdateTimer));
+                OnTimeFinished?.Invoke();
+            }
+
+            OnTimerUpdated?.Invoke(_currentLevelTime, _levelConfig.CriticalTimeThreshold);
         }
 
-        [Header(("Bullet Parameters"))]
-        [SerializeField]
-        private float _bulletArriveTime = 0.125f;
-        public float BulletArriveTime { get => _bulletArriveTime; private set => _bulletArriveTime = value; }
-
-        [SerializeField]
-        private float _damagableDestroyDelay = 1f;
-        public float DamagableDestroyDelay
+        /// <summary>
+        /// Adds extra time to the current timer.
+        /// </summary>
+        /// <param name="extraTimeInSeconds">The additional time to add, in seconds.</param>
+        public void AddExtraTime(float extraTimeInSeconds)
         {
-            get => _damagableDestroyDelay;
-            private set => _damagableDestroyDelay = value;
+            _currentLevelTime += extraTimeInSeconds;
+            if (!_isTimerRunning)
+            {
+                _isTimerRunning = true;
+                InvokeRepeating(nameof(UpdateTimer), _levelConfig.UpdateInterval, _levelConfig.UpdateInterval);
+            }
+
+            OnTimerUpdated?.Invoke(_currentLevelTime, _levelConfig.CriticalTimeThreshold);
         }
 
-        [SerializeField]
-        private float _damagableScaleChangeTime = 1f;
-        public float DamagableScaleChangeTime
+        /// <summary>
+        /// Stops the timer.
+        /// </summary>
+        public void StopTimer()
         {
-            get => _damagableScaleChangeTime;
-            private set => _damagableScaleChangeTime = value;
+            _isTimerRunning = false;
+            CancelInvoke(nameof(UpdateTimer));
         }
 
-        [SerializeField]
-        private float _menuAnimationDuration = 0.15f;
-        public float MenuAnimationDuration
+        /// <summary>
+        /// Resets the timer to the initial time.
+        /// </summary>
+        public void ResetTimer()
         {
-            get => _menuAnimationDuration;
-            private set => _menuAnimationDuration = value;
+            StopTimer();
+            StartTimer(_levelConfig.InitialTime);
         }
 
-        [SerializeField]
-        private float _menuAnimationDelay = 0.05f;
-        public float MenuAnimationDelay
-        {
-            get => _menuAnimationDelay;
-            private set => _menuAnimationDelay = value;
-        }
-
-        [SerializeField]
-        private float _hitMaterialChangeInterval = 0.15f;
-        public float HitMaterialChangeInterval
-        {
-            get => _hitMaterialChangeInterval;
-            private set => _hitMaterialChangeInterval = value;
-        }
-
-        [SerializeField]
-        private float _startDropDownDuration = 1f;
-        public float StartDropDownDuration
-        {
-            get => _startDropDownDuration;
-            private set => _startDropDownDuration = value;
-        }
-
-        [SerializeField]
-        private float _startDropDownDelay = 0.25f;
-        public float StartDropDownDelay
-        {
-            get => _startDropDownDelay;
-            private set => _startDropDownDelay = value;
-        }
-
-        [SerializeField]
-        private float _startScaleUpDuration = 1f;
-        public float StartScaleUpDuration
-        {
-            get => _startScaleUpDuration;
-            private set => _startScaleUpDuration = value;
-        }
-
-        [SerializeField]
-        private float _startScaleUpDelay = 0.25f;
-        public float StartScaleUpDelay
-        {
-            get => _startScaleUpDelay;
-            private set => _startScaleUpDelay = value;
-        }
         public void SetTimeScale(float scale)
         {
             Time.timeScale = scale;

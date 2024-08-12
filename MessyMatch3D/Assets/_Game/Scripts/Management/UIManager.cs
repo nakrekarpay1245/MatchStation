@@ -60,7 +60,7 @@ namespace _Game.Scripts.Management
             //LevelManager Events
             GlobalBinder.singleton.LevelManager.OnLevelCompleted += LevelComplete;
             GlobalBinder.singleton.LevelManager.OnLevelFailed += LevelFail;
-            GlobalBinder.singleton.LevelManager.OnTimerUpdated += UpdateTimerDisplay;
+            GlobalBinder.singleton.TimeManager.OnTimerUpdated += UpdateTimerDisplay;
         }
 
         /// <summary>

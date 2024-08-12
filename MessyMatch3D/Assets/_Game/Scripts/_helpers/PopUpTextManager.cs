@@ -22,6 +22,9 @@ namespace _Game.Scripts._helpers
 
         private ObjectPool<PopUpText> _popUpTextPool;
 
+        private float PopUpTextAnimationDuration = 0.25f;
+        private float PopUpTextAnimationDelay = 0.125f;
+
         private void Awake()
         {
             _popUpTextPool = new ObjectPool<PopUpText>(() => InstantiatePopUpText(), _poolSize);
@@ -53,11 +56,16 @@ namespace _Game.Scripts._helpers
 
             Sequence popUpSequence = DOTween.Sequence();
 
-            popUpSequence.Append(popUpText.transform.DOScale(_popUpTextScale, GlobalBinder.singleton.TimeManager.PopUpTextAnimationDuration).SetEase(Ease.OutBack))
-                         .Join(popUpText.transform.DOMove(endPosition, GlobalBinder.singleton.TimeManager.PopUpTextAnimationDuration).SetEase(Ease.OutQuad))
-                         .AppendInterval(GlobalBinder.singleton.TimeManager.PopUpTextAnimationDelay)
-                         .Append(popUpText.transform.DOScale(0, GlobalBinder.singleton.TimeManager.PopUpTextAnimationDuration).SetEase(Ease.InQuad))
-                         .Join(popUpText.transform.DOMove(endPosition + Vector3.up * _verticalPositionOverride, GlobalBinder.singleton.TimeManager.PopUpTextAnimationDuration).SetEase(Ease.InQuad))
+            popUpSequence.Append(popUpText.transform.DOScale(_popUpTextScale, PopUpTextAnimationDuration).
+                SetEase(Ease.OutBack))
+                         .Join(popUpText.transform.DOMove(endPosition, PopUpTextAnimationDuration).
+                         SetEase(Ease.OutQuad))
+                         .AppendInterval(PopUpTextAnimationDelay)
+                         .Append(popUpText.transform.DOScale(0, PopUpTextAnimationDuration).
+                         SetEase(Ease.InQuad))
+                         .Join(popUpText.transform.DOMove(endPosition + Vector3.up *
+                            _verticalPositionOverride, PopUpTextAnimationDuration).
+                         SetEase(Ease.InQuad))
                          .OnComplete(() => StartCoroutine(HidePopUpText(popUpText, duration)));
 
             popUpSequence.Play();
