@@ -376,6 +376,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 225116188}
+  - component: {fileID: 225116189}
   m_Layer: 0
   m_Name: SpecialSkillManager
   m_TagString: Untagged
@@ -398,6 +399,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 689825100}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &225116189
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 225116187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cbd52a1939fe4249b0a5b50363e9655, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _destroyTripleItemButton: {fileID: 867708103}
+  _itemShakerButton: {fileID: 1141529502}
+  _recycleItemButton: {fileID: 1030445674}
+  _freezeTimeButton: {fileID: 2027130648}
+  _timeFreezeDuration: 10
 --- !u!1 &253320489
 GameObject:
   m_ObjectHideFlags: 0
@@ -3768,7 +3786,6 @@ MonoBehaviour:
   - {fileID: 1407165546}
   - {fileID: 1940840206}
   - {fileID: 1990287022}
-  _itemMoveDuration: 0.25
   _matchMoveAnimationDuration: 0.3
   _matchScaleAnimationDuration: 0.125
 --- !u!114 &1739847986 stripped
@@ -4001,6 +4018,8 @@ MonoBehaviour:
   _levelConfig: {fileID: 11400000, guid: 93bcb47e3fa51504e9b53893ddd48bdd, type: 2}
   _generatedItems: []
   _activeItems: []
+  _activeRequireItems: []
+  _activeNormalItems: []
   _collectedItems: []
   _itemCreationInterval: 0.0052
   _minHorizontalPosition: -3
@@ -4357,7 +4376,6 @@ MonoBehaviour:
   _mouseDownGizmoColor: {r: 0, g: 1, b: 0, a: 1}
   _mouseHoldGizmoColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   _mouseUpGizmoColor: {r: 1, g: 0, b: 0, a: 1}
-  _itemMoveDuration: 0.5
   _playerInput: {fileID: 11400000, guid: 6c8029ceb2a85514bb154db31132b199, type: 2}
 --- !u!4 &2065229849
 Transform:

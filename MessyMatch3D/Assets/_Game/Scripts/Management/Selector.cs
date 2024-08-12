@@ -38,11 +38,6 @@ namespace _Game.Scripts.Management
         [SerializeField]
         private Color _mouseUpGizmoColor = Color.red;
 
-        [Header("Item Move Settings")]
-        [Tooltip("Duration for items to move to their new positions.")]
-        [SerializeField]
-        private float _itemMoveDuration = 0.5f;
-
         [Header("Dependencies")]
         [Tooltip("The PlayerInput scriptable object that stores input data.")]
         [SerializeField]
@@ -139,22 +134,9 @@ namespace _Game.Scripts.Management
         public void Collect(ICollectable collectable)
         {
             Item item = collectable as Item;
-            if (item == null || !item.Collectable) return;
+            if (item == null || !item.IsCollectable) return;
 
-            Tile emptyTile = GlobalBinder.singleton.TileManager.FindEmptyTile();
-            if (emptyTile != null)
-            {
-                emptyTile.Item = item;
-                item.transform.DORotate(Vector3.zero, _itemMoveDuration);
-                item.Collect();
-                GlobalBinder.singleton.LevelManager.UpdateItemCollection(item);
-                GlobalBinder.singleton.ItemManager.CollectItem(item);
-            }
-            else
-            {
-                Debug.Log("No empty tile available to place the item.");
-                GlobalBinder.singleton.LevelManager.LevelFail();
-            }
+            GlobalBinder.singleton.ItemManager.CollectItem(item);
 
             GlobalBinder.singleton.TileManager.AlignMatchingItems();
         }

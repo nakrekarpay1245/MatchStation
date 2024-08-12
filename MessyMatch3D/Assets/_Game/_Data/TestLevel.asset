@@ -22,7 +22,7 @@ MonoBehaviour:
     IsRequired: 1
   - ItemPrefab: {fileID: 1215803932127311526, guid: 0afabed72162b794f9f2dce6680152ea,
       type: 3}
-    ItemCount: 6
+    ItemCount: 3
     IsRequired: 0
   - ItemPrefab: {fileID: 1215803932127311526, guid: 4c819dfa2db695c48adad15e1f4e77af,
       type: 3}
@@ -30,5 +30,5 @@ MonoBehaviour:
     IsRequired: 0
   - ItemPrefab: {fileID: 1215803932127311526, guid: dca020950f857064caee006b356b7ecb,
       type: 3}
-    ItemCount: 9
+    ItemCount: 3
     IsRequired: 0

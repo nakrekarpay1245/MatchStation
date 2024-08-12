@@ -4,6 +4,9 @@ using UnityEngine;
 using DG.Tweening;
 using _Game.Scripts.Items;
 using _Game.Scripts.Data;
+using _Game.Scripts._helpers;
+using _Game.Scripts.Tiles;
+using System.Linq;
 
 namespace _Game.Scripts.Management
 {
@@ -93,8 +96,8 @@ namespace _Game.Scripts.Management
             //// Log the categorized items to the console.
             //LogItemsToConsole();
 
-            DeactivateRandomRequiredItems();
-            DeactivateRandomNormalItemsById();
+            //DeactivateRandomRequiredItems();
+            //DeactivateRandomNormalItemsById();
         }
 
         /// <summary>
@@ -179,22 +182,43 @@ namespace _Game.Scripts.Management
         /// <param name="collectedItem">The item to be collected.</param>
         public void CollectItem(Item collectedItem)
         {
-            if (_activeItems.Remove(collectedItem))
+            Tile emptyTile = GlobalBinder.singleton.TileManager.FindEmptyTile();
+            if (emptyTile != null)
             {
-                _collectedItems.Add(collectedItem);
+                emptyTile.Item = collectedItem;
+                collectedItem.ItemTile = emptyTile;
+                collectedItem.Collect();
 
-                // Determine if the item is required and remove from the appropriate list
-                var itemData = _levelConfig.ItemDataList.Find(
-                    data => data.ItemPrefab.ItemId == collectedItem.ItemId);
-                if (itemData != null && itemData.IsRequired)
+                GlobalBinder.singleton.LevelManager.UpdateItemCollection(collectedItem);
+
+                if (_activeItems.Remove(collectedItem))
                 {
-                    _activeRequireItems.Remove(collectedItem);
-                }
-                else
-                {
-                    _activeNormalItems.Remove(collectedItem);
+                    _collectedItems.Add(collectedItem);
+
+                    // Determine if the item is required and remove from the appropriate list
+                    var itemData = _levelConfig.ItemDataList.Find
+                        (data => data.ItemPrefab.ItemId == collectedItem.ItemId);
+                    if (itemData != null && itemData.IsRequired)
+                    {
+                        _activeRequireItems.Remove(collectedItem);
+                    }
+                    else
+                    {
+                        _activeNormalItems.Remove(collectedItem);
+                    }
                 }
             }
+            else
+            {
+                Debug.Log("No empty tile available to place the item.");
+                GlobalBinder.singleton.LevelManager.LevelFail();
+            }
+        }
+
+        public void RecycleLastCollectedItem()
+        {
+            Item lastCollectedItem = _collectedItems.LastOrDefault();
+            RecycleItem(lastCollectedItem);
         }
 
         /// <summary>
@@ -203,7 +227,7 @@ namespace _Game.Scripts.Management
         /// Otherwise, it is added to the _activeNormalItems list.
         /// </summary>
         /// <param name="recycledItem">The item to be recycled.</param>
-        public void RecycleItem(Item recycledItem)
+        private void RecycleItem(Item recycledItem)
         {
             if (_collectedItems.Remove(recycledItem))
             {
@@ -220,6 +244,10 @@ namespace _Game.Scripts.Management
                 {
                     _activeNormalItems.Add(recycledItem);
                 }
+
+                recycledItem.Recycle();
+                GlobalBinder.singleton.TileManager.ClearTile(recycledItem.ItemTile);
+                recycledItem.ItemTile = null;
             }
         }
 
@@ -264,8 +292,8 @@ namespace _Game.Scripts.Management
                 _activeRequireItems.Remove(item);
             }
 
-            //// Log the deactivated items to the console
-            //Debug.Log($"Deactivated {itemsToDeactivate.Count} required items with ID: {itemId}");
+            // Log the deactivated items to the console
+            Debug.Log($"Deactivated {itemsToDeactivate.Count} required items with ID: {itemId}");
         }
 
         /// <summary>
@@ -303,8 +331,8 @@ namespace _Game.Scripts.Management
                 _activeNormalItems.Remove(item);
             }
 
-            //// Log the deactivated items to the console
-            //Debug.Log($"Deactivated {itemsToDeactivate.Count} normal items with ID: {itemId}");
+            // Log the deactivated items to the console
+            Debug.Log($"Deactivated {itemsToDeactivate.Count} normal items with ID: {itemId}");
         }
 
         /// <summary>

@@ -18,14 +18,9 @@ namespace _Game.Scripts.Management
         private List<Tile> _activeTileList;
 
         [Header("Item Move Settings")]
-        [Tooltip("Duration for items to move to their new positions.")]
-        [SerializeField]
-        private float _itemMoveDuration = 1f;
-
         [Tooltip("Duration for the matching item animation.")]
         [SerializeField]
         private float _matchMoveAnimationDuration = 0.5f;
-
         [SerializeField]
         private float _matchScaleAnimationDuration = 0.25f;
 
@@ -61,8 +56,10 @@ namespace _Game.Scripts.Management
                     _activeTileList[i].Item = items[i];
 
                     // Animate the item moving to its new position
-                    items[i].transform.DOMove(_activeTileList[i].transform.position + Vector3.up,
-                        _itemMoveDuration).SetEase(Ease.InOutQuad);
+                    items[i].ItemTile = _activeTileList[i];
+
+                    //items[i].transform.DOMove(_activeTileList[i].transform.position + Vector3.up,
+                    //    _itemMoveDuration).SetEase(Ease.InOutQuad);
                 }
 
                 // Check for matching items in a row
@@ -142,6 +139,11 @@ namespace _Game.Scripts.Management
             });
 
             sequence.Play();
+        }
+
+        public void ClearTile(Tile tile)
+        {
+            tile.Item = null;
         }
 
         /// <summary>

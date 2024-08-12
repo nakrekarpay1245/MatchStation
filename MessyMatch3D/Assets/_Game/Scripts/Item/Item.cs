@@ -1,3 +1,4 @@
+using _Game.Scripts.Tiles;
 using DG.Tweening;
 using UnityEngine;
 
@@ -49,8 +50,36 @@ namespace _Game.Scripts.Items
             set => _itemDescription = value;
         }
 
-        private bool _collectable = true;
-        public bool Collectable { get => _collectable; private set => _collectable = value; }
+        [Header("Tile Parameters")]
+        [Tooltip("")]
+        [SerializeField]
+        private Tile _itemTile;
+        public Tile ItemTile
+        {
+            get
+            {
+                return _itemTile;
+            }
+            set
+            {
+                _itemTile = value;
+                Vector3 itemPosition = _itemTile ? _itemTile.transform.position : Vector3.zero;
+                transform.DOMove(itemPosition + _itemPositionOffset, _itemMoveDuration);
+                transform.DORotate(Vector3.zero, _itemMoveDuration);
+            }
+        }
+
+        [Header("Item Move Settings")]
+        [Tooltip("Duration for items to move to their new positions.")]
+        [SerializeField]
+        private float _itemMoveDuration = 0.5f;
+
+        [Tooltip("")]
+        [SerializeField]
+        private Vector3 _itemPositionOffset = Vector3.up;
+
+        private bool _isCollectable = true;
+        public bool IsCollectable { get => _isCollectable; private set => _isCollectable = value; }
 
         private Rigidbody _rigidbody;
 
@@ -78,7 +107,7 @@ namespace _Game.Scripts.Items
 
         public void Collect()
         {
-            _collectable = false;
+            _isCollectable = false;
 
             //Debug.Log(name + "Collected!");
             // Apply a scale effect using DOTween
@@ -86,6 +115,19 @@ namespace _Game.Scripts.Items
             transform.DOScale(Vector3.one, 0.2f).OnComplete(() =>
             {
                 _rigidbody.isKinematic = true;
+            });
+        }
+
+        public void Recycle()
+        {
+            _isCollectable = true;
+
+            //Debug.Log(name + " Recycled!");
+            // Apply a scale effect using DOTween
+            // Scale back to original
+            transform.DOScale(Vector3.one, 0.2f).OnComplete(() =>
+            {
+                _rigidbody.isKinematic = false;
             });
         }
     }
