@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using DG.Tweening;
 using _Game.Scripts.Items;
+using _Game.Scripts._Data;
 
 namespace _Game.Scripts.Management
 {
@@ -11,14 +11,14 @@ namespace _Game.Scripts.Management
     /// </summary>
     public class ItemManager : MonoBehaviour
     {
+        [Header("Level Config")]
+        [SerializeField]
+        private LevelConfig _levelConfig;
+
         [Header("Item Creation Settings")]
         [Tooltip("The time interval (in seconds) between creating each item.")]
         [SerializeField, Range(0.01f, 1f)]
         private float _itemCreationInterval = 0.1f;
-
-        [Tooltip("List of item creation data, specifying how many of each item to create.")]
-        [SerializeField]
-        private List<ItemCreationData> _itemCreationDataList;
 
         [Header("Spawn Area Settings")]
         [Tooltip("Minimum horizontal spawn position.")]
@@ -57,13 +57,13 @@ namespace _Game.Scripts.Management
         {
             // Create a list to track how many items have been created from each data entry
             List<int> createdItemsCount = new List<int>();
-            foreach (var itemData in _itemCreationDataList)
+            foreach (var itemData in _levelConfig.ItemDataList)
             {
                 createdItemsCount.Add(0);
             }
 
             int totalItemsToCreate = 0;
-            foreach (var itemData in _itemCreationDataList)
+            foreach (var itemData in _levelConfig.ItemDataList)
             {
                 totalItemsToCreate += GetValidatedItemCount(itemData.ItemCount);
             }
@@ -74,12 +74,12 @@ namespace _Game.Scripts.Management
                 int randomIndex;
                 do
                 {
-                    randomIndex = Random.Range(0, _itemCreationDataList.Count);
+                    randomIndex = Random.Range(0, _levelConfig.ItemDataList.Count);
                 }
-                while (createdItemsCount[randomIndex] >= GetValidatedItemCount(_itemCreationDataList[randomIndex].ItemCount));
+                while (createdItemsCount[randomIndex] >= GetValidatedItemCount(_levelConfig.ItemDataList[randomIndex].ItemCount));
 
                 // Create the item
-                CreateItem(_itemCreationDataList[randomIndex].ItemPrefab, createdItemsCount[randomIndex] + 1);
+                CreateItem(_levelConfig.ItemDataList[randomIndex].ItemPrefab, createdItemsCount[randomIndex] + 1);
 
                 // Increment the count for this item data entry
                 createdItemsCount[randomIndex]++;
@@ -142,19 +142,5 @@ namespace _Game.Scripts.Management
                             _maxVerticalPosition - _minVerticalPosition)
             );
         }
-    }
-
-    /// <summary>
-    /// Holds data for creating a specific item, including the item prefab and count.
-    /// </summary>
-    [System.Serializable]
-    public class ItemCreationData
-    {
-        [Header("Item Prefab Settings")]
-        [Tooltip("The item to be created.")]
-        public Item ItemPrefab;
-
-        [Tooltip("The number of items to create. This will be adjusted to a multiple of three.")]
-        public int ItemCount;
     }
 }

@@ -1,3 +1,4 @@
+using _Game.Scripts._Data;
 using _Game.Scripts._helpers;
 using _Game.Scripts.Items;
 using _Game.Scripts.Tiles;
@@ -8,15 +9,10 @@ namespace _Game.Scripts.Management
 {
     /// <summary>
     /// Handles the selection of items and their interaction.
+    /// Utilizes PlayerInput to manage user interactions with items.
     /// </summary>
     public class Selector : MonoBehaviour, ISelector, ICollector
     {
-        //[Header("Selector Params")]
-        //[SerializeField]
-        //private string _selectParticleKey = "Select";
-        //[SerializeField]
-        //private string _selectClipKey = "Select";
-
         [Header("Camera Parameters")]
         [SerializeField]
         private Camera _selectionCamera;
@@ -47,94 +43,78 @@ namespace _Game.Scripts.Management
         [SerializeField]
         private float _itemMoveDuration = 0.5f;
 
-        private bool _isMouseHeld = false;
+        [Header("Dependencies")]
+        [Tooltip("The PlayerInput scriptable object that stores input data.")]
+        [SerializeField]
+        private PlayerInput _playerInput;
+
         private Item _lastHoveredItem;
         private Item _currentlySelectedItem;
 
-        private void Update()
+        private void OnEnable()
         {
-            HandleMouseInput();
+            _playerInput.OnMouseDown += HandleMouseButtonDown;
+            _playerInput.OnMouseHeld += HandleMouseButton;
+            _playerInput.OnMouseUp += HandleMouseButtonUp;
         }
 
-        private void HandleMouseInput()
+        private void OnDisable()
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                HandleMouseButtonDown();
-            }
-            else if (Input.GetMouseButton(0))
-            {
-                HandleMouseButton();
-            }
-            else if (Input.GetMouseButtonUp(0))
-            {
-                HandleMouseButtonUp();
-            }
+            _playerInput.OnMouseDown -= HandleMouseButtonDown;
+            _playerInput.OnMouseHeld -= HandleMouseButton;
+            _playerInput.OnMouseUp -= HandleMouseButtonUp;
         }
 
         private void HandleMouseButtonDown()
         {
-            _isMouseHeld = true;
             CheckForItemAtMouse();
         }
 
         private void HandleMouseButton()
         {
-            if (_isMouseHeld)
-            {
-                CheckForItemAtMouse();
-            }
+            CheckForItemAtMouse();
         }
 
         private void HandleMouseButtonUp()
         {
-            _isMouseHeld = false;
             CheckForItemAtMouse();
 
             if (_currentlySelectedItem != null)
             {
                 Collect(_currentlySelectedItem);
             }
-
-            //Debug.Log("Mouse button released. Last hovered item: " +
-            //    (_lastHoveredItem ? _lastHoveredItem.name : "None"));
         }
 
         private void CheckForItemAtMouse()
         {
             if (_selectionCamera == null) return;
 
-            Ray ray = _selectionCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit, _raycastLength, _raycastLayerMask))
+            Ray ray = _selectionCamera.ScreenPointToRay(_playerInput.MousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hit, _raycastLength, _raycastLayerMask))
             {
                 var selectable = hit.collider.GetComponent<ISelectable>();
                 if (selectable != null)
                 {
                     _lastHoveredItem = selectable as Item;
-                    if (_isMouseHeld)
-                    {
-                        Select(_lastHoveredItem);
-                    }
+                    Select(_lastHoveredItem);
                 }
                 else
                 {
-                    if (_isMouseHeld && _currentlySelectedItem != null)
-                    {
-                        DeSelect(_currentlySelectedItem);
-                        _currentlySelectedItem = null;
-                    }
-                    //Debug.Log("No item detected.");
+                    DeSelectCurrentItem();
                 }
             }
             else
             {
-                if (_isMouseHeld && _currentlySelectedItem != null)
-                {
-                    DeSelect(_currentlySelectedItem);
-                    _currentlySelectedItem = null;
-                }
+                DeSelectCurrentItem();
+            }
+        }
+
+        private void DeSelectCurrentItem()
+        {
+            if (_currentlySelectedItem != null)
+            {
+                DeSelect(_currentlySelectedItem);
+                _currentlySelectedItem = null;
             }
         }
 
@@ -159,25 +139,14 @@ namespace _Game.Scripts.Management
         public void Collect(ICollectable collectable)
         {
             Item item = collectable as Item;
+            if (item == null || !item.Collectable) return;
 
-            if (item == null && item.Collectable) return;
-
-            // Find an empty tile and assign the item to it
             Tile emptyTile = GlobalBinder.singleton.TileManager.FindEmptyTile();
             if (emptyTile != null)
             {
-                // Update tile and item references
                 emptyTile.Item = item;
-                //item.transform.position = emptyTile.transform.position;
-                //item.transform.rotation = Quaternion.identity; // Reset rotation to (0,0,0)
-
-                //// Optionally, animate item to move to the tile's position using DOTween
-                //item.transform.DOMove(emptyTile.transform.position + Vector3.up, _itemMoveDuration);
                 item.transform.DORotate(Vector3.zero, _itemMoveDuration);
-
-                // Collect the item (optional)
                 item.Collect();
-
                 GlobalBinder.singleton.LevelManager.UpdateItemCollection(item);
             }
             else
@@ -194,24 +163,11 @@ namespace _Game.Scripts.Management
             if (_selectionCamera == null) return;
 
             Vector3 rayOrigin = _selectionCamera.transform.position;
-            Vector3 rayDirection = _selectionCamera.ScreenPointToRay(Input.mousePosition).direction;
+            Vector3 rayDirection = _selectionCamera.ScreenPointToRay(_playerInput.MousePosition).direction;
 
-            // Draw raycast for different mouse states
-            if (Input.GetMouseButtonDown(0))
-            {
-                Gizmos.color = _mouseDownGizmoColor;
-                Gizmos.DrawRay(rayOrigin, rayDirection * _raycastLength);
-            }
-            else if (Input.GetMouseButton(0))
-            {
-                Gizmos.color = _mouseHoldGizmoColor;
-                Gizmos.DrawRay(rayOrigin, rayDirection * _raycastLength);
-            }
-            else
-            {
-                Gizmos.color = _mouseUpGizmoColor;
-                Gizmos.DrawRay(rayOrigin, rayDirection * _raycastLength);
-            }
+            Gizmos.color = _playerInput.IsMouseHeld ? _mouseHoldGizmoColor :
+                           _playerInput.IsMouseUp ? _mouseUpGizmoColor : _mouseDownGizmoColor;
+            Gizmos.DrawRay(rayOrigin, rayDirection * _raycastLength);
         }
     }
 }

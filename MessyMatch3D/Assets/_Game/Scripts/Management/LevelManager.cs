@@ -1,12 +1,9 @@
 using UnityEngine;
-using DG.Tweening;
-using TMPro;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using _Game.Scripts.Items;
-using System.Linq;
-using _Game.Scripts.Tiles;
+using UnityEngine.Events;
+using _Game.Scripts._Data;
 
 namespace _Game.Scripts.Management
 {
@@ -17,51 +14,9 @@ namespace _Game.Scripts.Management
     public class LevelManager : MonoBehaviour
     {
         [Header("LevelManager Parameters")]
-        [Header("UI Elements")]
-        [SerializeField, Tooltip("Pause menu UI element")]
-        private CanvasGroup _pauseMenu;
-
-        [SerializeField, Tooltip("Resume button UI element")]
-        private LeafButton _resumeButton;
-
-        [SerializeField, Tooltip("Restart button UI element")]
-        private LeafButton _restartButton;
-
-        [SerializeField, Tooltip("Menu button UI element")]
-        private LeafButton _menuButton;
-
-        [SerializeField, Tooltip("Pause button UI element")]
-        private LeafButton _nextButton;
-
-        [SerializeField, Tooltip("Pause button UI element")]
-        private LeafButton _pauseButton;
-
-        [SerializeField, Tooltip("Level complete text UI element")]
-        private TextMeshProUGUI _levelCompleteText;
-
-        [SerializeField, Tooltip("Level fail text UI element")]
-        private TextMeshProUGUI _levelFailText;
-
-        [SerializeField, Tooltip("Game pause text UI element")]
-        private TextMeshProUGUI _gamePausedText;
-
-        [Header("Timer Settings")]
-        [Header("UI")]
-        [Tooltip("Text component to display the remaining level time.")]
-        [SerializeField] private TextMeshProUGUI _levelTimeText;
-
-        [Tooltip("Text color when the time is below the critical threshold.")]
-        [SerializeField] private Color _criticalTimeColor = Color.red;
-
-        [Tooltip("Initial time for the level in seconds.")]
-        [SerializeField] private float _initialTime = 300f; // 5 minutes
-
-        [Header("Logic")]
-        [Tooltip("Update interval for the timer in seconds.")]
-        [SerializeField] private float _updateInterval = 1f;
-
-        [Tooltip("Critical time threshold in seconds.")]
-        [SerializeField] private float _criticalTimeThreshold = 10f;
+        [Header("Level Configuration")]
+        [Tooltip("Reference to the level configuration.")]
+        [SerializeField] private LevelConfig _levelConfig;
 
         private float _currentLevelTime;
         private bool _isTimerRunning;
@@ -77,74 +32,68 @@ namespace _Game.Scripts.Management
 
         [Tooltip("Prefab for the item indicator.")]
         [SerializeField]
-        private GameObject _indicatorPrefab;
+        private ItemIndicator _indicatorPrefab;
 
         [Header("Item Requirements")]
         [Tooltip("List of required items and their quantities.")]
         [SerializeField]
         private List<ItemRequirement> _itemRequirements;
 
+        [Tooltip("List of all required items")]
+        [SerializeField]
+        private List<Item> _requireItems;
+
         private Dictionary<int, ItemIndicator> _itemIndicators = new Dictionary<int, ItemIndicator>();
-        private int _totalItemsRequired;
-        private int _totalItemsCollected;
+
         private int _currentLevelIndex = 0;
+
+        public UnityAction<float, float> OnTimerUpdated;
+        public UnityAction OnLevelFailed;
+        public UnityAction OnLevelCompleted;
 
         private void Start()
         {
-            // Initialize buttons with corresponding functions
-            InitializeButtons();
-
-            // Hide pause menu and end level texts at the start
-            _pauseMenu.alpha = 0;
-            _pauseMenu.gameObject.SetActive(false);
-            _levelCompleteText.gameObject.SetActive(false);
-            _levelFailText.gameObject.SetActive(false);
-            _gamePausedText.gameObject.SetActive(false);
-
-            StartTimer(_initialTime);
+            StartTimer(_levelConfig.InitialTime);
 
             if (_tutorial)
                 _tutorial.Open();
+
+            SetRequireItems();
 
             CreateItemIndicators();
         }
 
         /// <summary>
-        /// Initializes buttons with corresponding functions using LeafButton.
+        /// Populates the _requireItems list based on _itemRequirements.
+        /// Items are added to _requireItems according to their quantity in _itemRequirements.
         /// </summary>
-        private void InitializeButtons()
+        private void SetRequireItems()
         {
-            // Assign corresponding functions to each button's onClick event
-            AddButtonListener(_resumeButton, Resume);
-            AddButtonListener(_restartButton, Restart);
-            AddButtonListener(_menuButton, Menu);
-            AddButtonListener(_nextButton, Next);
-            AddButtonListener(_pauseButton, Pause);
-        }
+            // Clear the list to avoid duplication or stale data
+            _requireItems.Clear();
 
-        /// <summ
-        /// ary>
-        /// Adds a listener to the button using LeafButton's onClick event.
-        /// </summary>
-        /// <param name="button">The LeafButton component to add the listener to.</param>
-        /// <param name="action">The action to invoke when the button is clicked.</param>
-        private void AddButtonListener(LeafButton button, System.Action action)
-        {
-            button.OnPressed.AddListener(() => action.Invoke());
+            // Iterate through the item requirements
+            foreach (var requirement in _itemRequirements)
+            {
+                // Add the item to the list as many times as specified by the quantity
+                for (int i = 0; i < requirement.Quantity; i++)
+                {
+                    _requireItems.Add(requirement.Item);
+                }
+            }
+
+            // Optionally, you can use DOTween for animations or other effects here
+            // For example, if you want to animate the addition of items
+            // DOTween.Sequence()...
         }
 
         private void CreateItemIndicators()
         {
-            _totalItemsRequired = 0;
-            _totalItemsCollected = 0;
-
             foreach (var itemRequirement in _itemRequirements)
             {
-                _totalItemsRequired += itemRequirement.Quantity;
-
                 // Instantiate indicator prefab
-                var indicatorObject = Instantiate(_indicatorPrefab, _indicatorsParent);
-                var itemIndicator = indicatorObject.GetComponent<ItemIndicator>();
+                var currentIndicator = Instantiate(_indicatorPrefab, _indicatorsParent);
+                var itemIndicator = currentIndicator;
 
                 // Set up the indicator
                 itemIndicator.SetIcon(itemRequirement.Item.ItemIcon);
@@ -162,8 +111,10 @@ namespace _Game.Scripts.Management
         {
             _currentLevelTime = timeInSeconds;
             _isTimerRunning = true;
-            UpdateTimerDisplay();
-            InvokeRepeating(nameof(UpdateTimer), _updateInterval, _updateInterval);
+
+            OnTimerUpdated?.Invoke(_currentLevelTime, _levelConfig.CriticalTimeThreshold);
+
+            InvokeRepeating(nameof(UpdateTimer), _levelConfig.UpdateInterval, _levelConfig.UpdateInterval);
         }
 
         /// <summary>
@@ -173,7 +124,7 @@ namespace _Game.Scripts.Management
         {
             if (!_isTimerRunning) return;
 
-            _currentLevelTime -= _updateInterval;
+            _currentLevelTime -= _levelConfig.UpdateInterval;
             if (_currentLevelTime <= 0)
             {
                 _currentLevelTime = 0;
@@ -182,40 +133,25 @@ namespace _Game.Scripts.Management
                 LevelFail();
             }
 
-            UpdateTimerDisplay();
-        }
-
-        /// <summary>
-        /// Updates the timer display in the format of "MM:SS".
-        /// </summary>
-        private void UpdateTimerDisplay()
-        {
-            int minutes = Mathf.FloorToInt(_currentLevelTime / 60);
-            int seconds = Mathf.FloorToInt(_currentLevelTime % 60);
-            _levelTimeText.text = $"{minutes:D2}:{seconds:D2}";
-
-            if (_currentLevelTime <= _criticalTimeThreshold)
-            {
-                _levelTimeText.color = _criticalTimeColor;
-                _levelTimeText.rectTransform.DOPunchScale(Vector3.one * 0.2f, 0.5f, 1, 0).
-                    SetEase(Ease.InOutQuad).SetLoops(2, LoopType.Yoyo);
-            }
+            OnTimerUpdated?.Invoke(_currentLevelTime, _levelConfig.CriticalTimeThreshold);
         }
 
         /// <summary>
         /// Adds extra time to the current timer.
         /// </summary>
         /// <param name="extraTimeInSeconds">The additional time to add, in seconds.</param>
+
         public void AddExtraTime(float extraTimeInSeconds)
         {
             _currentLevelTime += extraTimeInSeconds;
             if (!_isTimerRunning)
             {
                 _isTimerRunning = true;
-                InvokeRepeating(nameof(UpdateTimer), _updateInterval, _updateInterval);
+                InvokeRepeating(nameof(UpdateTimer), _levelConfig.UpdateInterval,
+                    _levelConfig.UpdateInterval);
             }
 
-            UpdateTimerDisplay();
+            OnTimerUpdated?.Invoke(_currentLevelTime, _levelConfig.CriticalTimeThreshold);
         }
 
         /// <summary>
@@ -233,7 +169,7 @@ namespace _Game.Scripts.Management
         public void ResetTimer()
         {
             StopTimer();
-            StartTimer(_initialTime);
+            StartTimer(_levelConfig.InitialTime);
         }
 
         /// <summary>
@@ -241,24 +177,8 @@ namespace _Game.Scripts.Management
         /// </summary>
         public void LevelComplete()
         {
-            _levelCompleteText.gameObject.SetActive(true);
-            _levelFailText.gameObject.SetActive(false);
-            _pauseMenu.gameObject.SetActive(true);
-            _gamePausedText.gameObject.SetActive(false);
-
-            _resumeButton.gameObject.SetActive(false);
-            _restartButton.gameObject.SetActive(true);
-            _menuButton.gameObject.SetActive(true);
-            _nextButton.gameObject.SetActive(true);
-
-            _pauseMenu.DOFade(1, 1f).OnComplete(() =>
-            {
-                _levelCompleteText.DOFade(1, 1f).SetDelay(2f).OnComplete(() =>
-                {
-                    IncreaseLevelIndex();
-                });
-            });
-            Debug.Log("Level Complete");
+            OnLevelCompleted?.Invoke();
+            Debug.Log("Level CompleteD!");
         }
 
         /// <summary>
@@ -266,21 +186,8 @@ namespace _Game.Scripts.Management
         /// </summary>
         public void LevelFail()
         {
-            _levelFailText.gameObject.SetActive(true);
-            _levelCompleteText.gameObject.SetActive(false);
-            _pauseMenu.gameObject.SetActive(true);
-            _gamePausedText.gameObject.SetActive(false);
-
-            _resumeButton.gameObject.SetActive(false);
-            _nextButton.gameObject.SetActive(false);
-            _restartButton.gameObject.SetActive(true);
-            _menuButton.gameObject.SetActive(true);
-
-            _pauseMenu.DOFade(1, 1f).OnComplete(() =>
-            {
-                _levelFailText.DOFade(1, 1f).SetDelay(2f);
-            });
-            Debug.Log("Level Fail");
+            OnLevelFailed?.Invoke();
+            Debug.Log("Level Failed!");
         }
 
         /// <summary>
@@ -290,43 +197,6 @@ namespace _Game.Scripts.Management
         {
             _currentLevelIndex++;
             Debug.Log($"Increased Level Index to {_currentLevelIndex}");
-        }
-
-        /// <summary>
-        /// Pauses the game and shows the pause menu with a fade animation.
-        /// </summary>
-        public void Pause()
-        {
-            _pauseMenu.gameObject.SetActive(true);
-            _gamePausedText.gameObject.SetActive(true);
-
-            _pauseButton.gameObject.SetActive(false);
-            _nextButton.gameObject.SetActive(false);
-
-            Sequence pauseSequence = DOTween.Sequence();
-            pauseSequence.Append(_pauseMenu.DOFade(1, 0.5f))
-                          .AppendCallback(() =>
-                          {
-                              Time.timeScale = 0;
-                          })
-                          .OnComplete(() => Debug.Log("Game Paused"));
-        }
-
-        /// <summary>
-        /// Resumes the game from pause state with a fade animation.
-        /// </summary>
-        public void Resume()
-        {
-            Time.timeScale = 1;
-            _pauseButton.gameObject.SetActive(true);
-            Sequence resumeSequence = DOTween.Sequence();
-            resumeSequence.Append(_pauseMenu.DOFade(0, 0.5f))
-                          .OnComplete(() =>
-                          {
-                              _gamePausedText.gameObject.SetActive(false);
-                              _pauseMenu.gameObject.SetActive(false);
-                              Debug.Log("Game Resumed");
-                          });
         }
 
         /// <summary>
@@ -377,12 +247,21 @@ namespace _Game.Scripts.Management
         {
             if (_itemIndicators.TryGetValue(item.ItemId, out var itemIndicator))
             {
+                //Debug.Log(item.name + " is required!");
                 itemIndicator.DecreaseQuantity();
-                _totalItemsCollected++;
 
-                if (_totalItemsCollected >= _totalItemsRequired)
+                foreach (Item requireItem in _requireItems)
                 {
-                    LevelComplete();
+                    if (item.ItemId == requireItem.ItemId)
+                    {
+                        _requireItems.Remove(requireItem);
+
+                        if (_requireItems.Count <= 0)
+                        {
+                            LevelComplete();
+                        }
+                        break;
+                    }
                 }
             }
         }

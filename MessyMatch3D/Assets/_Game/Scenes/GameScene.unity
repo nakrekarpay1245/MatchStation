@@ -1435,29 +1435,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0a6b3d4c8f93534aa315dc1bb04c31f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _pauseMenu: {fileID: 1538864994}
-  _resumeButton: {fileID: 137995858}
-  _restartButton: {fileID: 315429244}
-  _menuButton: {fileID: 1695395967}
-  _nextButton: {fileID: 1839365025}
-  _pauseButton: {fileID: 380446653}
-  _levelCompleteText: {fileID: 1594171994}
-  _levelFailText: {fileID: 1459869360}
-  _gamePausedText: {fileID: 562416819}
-  _levelTimeText: {fileID: 314975293}
-  _criticalTimeColor: {r: 1, g: 0, b: 0, a: 1}
-  _initialTime: 10
-  _updateInterval: 1
-  _criticalTimeThreshold: 10
+  _levelConfig: {fileID: 11400000, guid: 93bcb47e3fa51504e9b53893ddd48bdd, type: 2}
   _tutorial: {fileID: 0}
   _indicatorsParent: {fileID: 301109651}
-  _indicatorPrefab: {fileID: 7118108009690645277, guid: ac02d2be35a279d48be4287acbdf7028,
+  _indicatorPrefab: {fileID: 6255623286210125375, guid: ac02d2be35a279d48be4287acbdf7028,
     type: 3}
   _itemRequirements:
   - Item: {fileID: 8000916057872767899, guid: 86628fe099557604eb47c65192cb0247, type: 3}
-    Quantity: 6
-  - Item: {fileID: 1215803932127311526, guid: dca020950f857064caee006b356b7ecb, type: 3}
     Quantity: 3
+  _requireItems: []
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -1951,6 +1937,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &979117986
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 979117988}
+  - component: {fileID: 979117987}
+  m_Layer: 0
+  m_Name: InputHandler
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &979117987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 979117986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d65b0c2687888d4192df66af68871cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playerInput: {fileID: 11400000, guid: 6c8029ceb2a85514bb154db31132b199, type: 2}
+--- !u!4 &979117988
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 979117986}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1157654808 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2242584232014739553, guid: f043ede2293358742924a3c4e2e35fe2,
@@ -2319,13 +2350,13 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 562416817}
+  - {fileID: 137995854}
+  - {fileID: 315429240}
+  - {fileID: 1695395963}
+  - {fileID: 1839365021}
   - {fileID: 1594171992}
   - {fileID: 1459869358}
-  - {fileID: 315429240}
-  - {fileID: 1839365021}
-  - {fileID: 1695395963}
-  - {fileID: 137995854}
+  - {fileID: 562416817}
   m_Father: {fileID: 2138136366}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -3378,20 +3409,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c508cef0b3d3ed34fafeabaa5a960896, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _levelConfig: {fileID: 11400000, guid: 93bcb47e3fa51504e9b53893ddd48bdd, type: 2}
   _itemCreationInterval: 0.01
-  _itemCreationDataList:
-  - ItemPrefab: {fileID: 8000916057872767899, guid: 86628fe099557604eb47c65192cb0247,
-      type: 3}
-    ItemCount: 9
-  - ItemPrefab: {fileID: 1215803932127311526, guid: 0afabed72162b794f9f2dce6680152ea,
-      type: 3}
-    ItemCount: 9
-  - ItemPrefab: {fileID: 1215803932127311526, guid: 4c819dfa2db695c48adad15e1f4e77af,
-      type: 3}
-    ItemCount: 9
-  - ItemPrefab: {fileID: 1215803932127311526, guid: dca020950f857064caee006b356b7ecb,
-      type: 3}
-    ItemCount: 9
   _minHorizontalPosition: -3
   _maxHorizontalPosition: 3
   _minVerticalPosition: -3
@@ -3451,6 +3470,7 @@ Transform:
   - {fileID: 2028953738}
   - {fileID: 161569234}
   - {fileID: 755733575}
+  - {fileID: 2123970375}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1940840206 stripped
@@ -3635,6 +3655,7 @@ MonoBehaviour:
   _mouseHoldGizmoColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   _mouseUpGizmoColor: {r: 1, g: 0, b: 0, a: 1}
   _itemMoveDuration: 0.5
+  _playerInput: {fileID: 11400000, guid: 6c8029ceb2a85514bb154db31132b199, type: 2}
 --- !u!4 &2065229849
 Transform:
   m_ObjectHideFlags: 0
@@ -3842,6 +3863,61 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2123970374
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2123970375}
+  - component: {fileID: 2123970376}
+  m_Layer: 0
+  m_Name: UIManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2123970375
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2123970374}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1927993579}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2123970376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2123970374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13005b7a4615c484bb180fb41889c257, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _pauseMenu: {fileID: 1538864994}
+  _resumeButton: {fileID: 137995858}
+  _restartButton: {fileID: 315429244}
+  _menuButton: {fileID: 1695395967}
+  _nextButton: {fileID: 1839365025}
+  _pauseButton: {fileID: 380446653}
+  _levelCompleteText: {fileID: 1594171994}
+  _levelFailText: {fileID: 1459869360}
+  _gamePausedText: {fileID: 562416819}
+  _levelTimeText: {fileID: 314975293}
+  _criticalTimeColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &2138136362
 GameObject:
   m_ObjectHideFlags: 0
@@ -4029,3 +4105,4 @@ SceneRoots:
   - {fileID: 689825100}
   - {fileID: 2079531627}
   - {fileID: 2065229849}
+  - {fileID: 979117988}
