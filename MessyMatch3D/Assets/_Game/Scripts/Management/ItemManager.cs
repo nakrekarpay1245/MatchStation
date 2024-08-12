@@ -4,13 +4,12 @@ using UnityEngine;
 using DG.Tweening;
 using _Game.Scripts.Items;
 using _Game.Scripts.Data;
-using System.Linq; // DOTween namespace
 
 namespace _Game.Scripts.Management
 {
     /// <summary>
     /// Manages the creation and management of items in the game.
-    /// Ensures items are created at specified intervals and in multiples of three.
+    /// Ensures items are created at specified intervals and organized into required and normal categories.
     /// </summary>
     public class ItemManager : MonoBehaviour
     {
@@ -24,11 +23,15 @@ namespace _Game.Scripts.Management
         [SerializeField]
         private List<Item> _activeItems = new List<Item>();
         [SerializeField]
+        private List<Item> _activeRequireItems = new List<Item>();
+        [SerializeField]
+        private List<Item> _activeNormalItems = new List<Item>();
+        [SerializeField]
         private List<Item> _collectedItems = new List<Item>();
 
         [Header("Item Creation Settings")]
         [Tooltip("Time interval between creating each item.")]
-        [SerializeField, Range(0.01f, 1f)]
+        [SerializeField, Range(0.001f, 0.1f)]
         private float _itemCreationInterval = 0.1f;
 
         [Header("Spawn Area Settings")]
@@ -54,7 +57,7 @@ namespace _Game.Scripts.Management
         }
 
         /// <summary>
-        /// Coroutine to handle the creation of items at intervals.
+        /// Coroutine to handle the creation of items at intervals and their categorization.
         /// </summary>
         private IEnumerator CreateItemsRoutine()
         {
@@ -79,11 +82,16 @@ namespace _Game.Scripts.Management
                 }
                 while (createdItemsCount[randomIndex] >= GetValidatedItemCount(_levelConfig.ItemDataList[randomIndex].ItemCount));
 
-                CreateItem(_levelConfig.ItemDataList[randomIndex].ItemPrefab, createdItemsCount[randomIndex] + 1);
+                CreateItem(_levelConfig.ItemDataList[randomIndex], createdItemsCount[randomIndex] + 1);
                 createdItemsCount[randomIndex]++;
 
                 yield return new WaitForSeconds(_itemCreationInterval);
             }
+
+            CategorizeItems();
+
+            // Log the categorized items to the console.
+            LogItemsToConsole();
         }
 
         /// <summary>
@@ -98,10 +106,11 @@ namespace _Game.Scripts.Management
 
         /// <summary>
         /// Creates an item and assigns it a unique name based on the current item set and item number.
+        /// Adds the item to the active list.
         /// </summary>
-        /// <param name="itemPrefab">The prefab of the item to create.</param>
+        /// <param name="itemData">The data of the item to create.</param>
         /// <param name="itemNumber">The item's number in the current set.</param>
-        private void CreateItem(Item itemPrefab, int itemNumber)
+        private void CreateItem(LevelConfig.ItemData itemData, int itemNumber)
         {
             Vector3 spawnPosition = new Vector3(
                 Random.Range(_minHorizontalPosition, _maxHorizontalPosition),
@@ -109,14 +118,54 @@ namespace _Game.Scripts.Management
                 Random.Range(_minVerticalPosition, _maxVerticalPosition)
             );
 
-            Item newItem = Instantiate(itemPrefab, spawnPosition, Quaternion.identity, transform);
-            newItem.name = $"{itemPrefab.GetType().Name}_{itemNumber}";
+            Item newItem = Instantiate(itemData.ItemPrefab, spawnPosition, Quaternion.identity, transform);
+            newItem.name = $"{itemData.ItemPrefab.GetType().Name}_{itemNumber}";
 
             _generatedItems.Add(newItem);
             _activeItems.Add(newItem);
 
             // Optional: Animate item creation with DOTween
             newItem.transform.DOScale(Vector3.one, _itemCreationInterval);
+        }
+
+        /// <summary>
+        /// Categorizes active items into required and normal lists based on their configuration.
+        /// </summary>
+        private void CategorizeItems()
+        {
+            _activeRequireItems.Clear();
+            _activeNormalItems.Clear();
+
+            foreach (var item in _activeItems)
+            {
+                var itemData = _levelConfig.ItemDataList.Find(data => data.ItemPrefab.ItemId == item.ItemId);
+                if (itemData != null && itemData.IsRequired)
+                {
+                    _activeRequireItems.Add(item);
+                }
+                else
+                {
+                    _activeNormalItems.Add(item);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Logs the categorized items to the console.
+        /// </summary>
+        private void LogItemsToConsole()
+        {
+            Debug.Log("Require Items:");
+            foreach (var item in _activeRequireItems)
+            {
+                Debug.Log(item.name);
+            }
+
+            Debug.Log("Normal Items:");
+            foreach (var item in _activeNormalItems)
+            {
+                Debug.Log(item.name);
+            }
         }
 
         /// <summary>
