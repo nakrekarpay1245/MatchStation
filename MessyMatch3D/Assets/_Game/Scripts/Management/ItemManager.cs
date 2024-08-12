@@ -90,8 +90,11 @@ namespace _Game.Scripts.Management
 
             CategorizeItems();
 
-            // Log the categorized items to the console.
-            LogItemsToConsole();
+            //// Log the categorized items to the console.
+            //LogItemsToConsole();
+
+            DeactivateRandomRequiredItems();
+            DeactivateRandomNormalItemsById();
         }
 
         /// <summary>
@@ -150,26 +153,28 @@ namespace _Game.Scripts.Management
             }
         }
 
-        /// <summary>
-        /// Logs the categorized items to the console.
-        /// </summary>
-        private void LogItemsToConsole()
-        {
-            Debug.Log("Require Items:");
-            foreach (var item in _activeRequireItems)
-            {
-                Debug.Log(item.name);
-            }
+        ///// <summary>
+        ///// Logs the categorized items to the console.
+        ///// </summary>
+        //private void LogItemsToConsole()
+        //{
+        //    Debug.Log("Require Items:");
+        //    foreach (var item in _activeRequireItems)
+        //    {
+        //        Debug.Log(item.name);
+        //    }
 
-            Debug.Log("Normal Items:");
-            foreach (var item in _activeNormalItems)
-            {
-                Debug.Log(item.name);
-            }
-        }
+        //    Debug.Log("Normal Items:");
+        //    foreach (var item in _activeNormalItems)
+        //    {
+        //        Debug.Log(item.name);
+        //    }
+        //}
 
         /// <summary>
         /// Collects an item, moving it from the active list to the collected list.
+        /// If the item is required, it is removed from the _activeRequireItems list.
+        /// Otherwise, it is removed from the _activeNormalItems list.
         /// </summary>
         /// <param name="collectedItem">The item to be collected.</param>
         public void CollectItem(Item collectedItem)
@@ -177,11 +182,25 @@ namespace _Game.Scripts.Management
             if (_activeItems.Remove(collectedItem))
             {
                 _collectedItems.Add(collectedItem);
+
+                // Determine if the item is required and remove from the appropriate list
+                var itemData = _levelConfig.ItemDataList.Find(
+                    data => data.ItemPrefab.ItemId == collectedItem.ItemId);
+                if (itemData != null && itemData.IsRequired)
+                {
+                    _activeRequireItems.Remove(collectedItem);
+                }
+                else
+                {
+                    _activeNormalItems.Remove(collectedItem);
+                }
             }
         }
 
         /// <summary>
         /// Recycles an item, moving it from the collected list back to the active list.
+        /// If the item is required, it is added to the _activeRequireItems list.
+        /// Otherwise, it is added to the _activeNormalItems list.
         /// </summary>
         /// <param name="recycledItem">The item to be recycled.</param>
         public void RecycleItem(Item recycledItem)
@@ -189,7 +208,103 @@ namespace _Game.Scripts.Management
             if (_collectedItems.Remove(recycledItem))
             {
                 _activeItems.Add(recycledItem);
+
+                // Determine if the item is required and add to the appropriate list
+                var itemData = _levelConfig.ItemDataList.Find(
+                    data => data.ItemPrefab.ItemId == recycledItem.ItemId);
+                if (itemData != null && itemData.IsRequired)
+                {
+                    _activeRequireItems.Add(recycledItem);
+                }
+                else
+                {
+                    _activeNormalItems.Add(recycledItem);
+                }
             }
+        }
+
+        /// <summary>
+        /// Deactivates up to 3 active items that are required and share the same ID.
+        /// A random required item is selected from the active list, and additional items
+        /// with the same ID are also deactivated if available.
+        /// </summary>
+        public void DeactivateRandomRequiredItems()
+        {
+            if (_activeRequireItems.Count == 0)
+            {
+                Debug.LogWarning("No active required items available to deactivate.");
+                return;
+            }
+
+            // Select a random required item from the active list
+            Item randomItem = _activeRequireItems[Random.Range(0, _activeRequireItems.Count)];
+            int itemId = randomItem.ItemId;
+
+            // List to store the items that will be deactivated
+            List<Item> itemsToDeactivate = new List<Item> { randomItem };
+
+            // Find up to 2 more required items with the same ID
+            foreach (var item in _activeRequireItems)
+            {
+                if (item.ItemId == itemId && item != randomItem)
+                {
+                    itemsToDeactivate.Add(item);
+                    if (itemsToDeactivate.Count == 3)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            // Deactivate the items
+            foreach (var item in itemsToDeactivate)
+            {
+                item.gameObject.SetActive(false);
+                _activeItems.Remove(item);
+                _activeRequireItems.Remove(item);
+            }
+
+            //// Log the deactivated items to the console
+            //Debug.Log($"Deactivated {itemsToDeactivate.Count} required items with ID: {itemId}");
+        }
+
+        /// <summary>
+        /// Deactivates up to 3 active items that are not required (normal) and share the same ID.
+        /// A random not required (normal) item is selected from the active list, and additional items
+        /// with the same ID are also deactivated if available.
+        /// </summary>
+        public void DeactivateRandomNormalItemsById()
+        {
+            // List to store the items that will be deactivated
+            List<Item> itemsToDeactivate = new List<Item>();
+
+            // Find a random normal item
+            Item randomNormalItem = _activeNormalItems[Random.Range(0, _activeNormalItems.Count)];
+            int itemId = randomNormalItem.ItemId;
+
+            // Find all normal items with the same ID
+            foreach (var item in _activeNormalItems)
+            {
+                if (item.ItemId == itemId)
+                {
+                    itemsToDeactivate.Add(item);
+                    if (itemsToDeactivate.Count == 3)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            // Deactivate the items
+            foreach (var item in itemsToDeactivate)
+            {
+                item.gameObject.SetActive(false);
+                _activeItems.Remove(item);
+                _activeNormalItems.Remove(item);
+            }
+
+            //// Log the deactivated items to the console
+            //Debug.Log($"Deactivated {itemsToDeactivate.Count} normal items with ID: {itemId}");
         }
 
         /// <summary>
