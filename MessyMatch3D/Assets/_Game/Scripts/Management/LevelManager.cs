@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using _Game.Scripts.Items;
 using UnityEngine.Events;
 using _Game.Scripts._Data;
+using DG.Tweening; // DOTween kütüphanesi için
 
 namespace _Game.Scripts.Management
 {
@@ -21,10 +22,6 @@ namespace _Game.Scripts.Management
         private float _currentLevelTime;
         private bool _isTimerRunning;
 
-        [Header("Tutroial Params")]
-        [SerializeField]
-        private MenuView _tutorial;
-
         [Header("Indicator Settings")]
         [Tooltip("Parent object for the item indicators.")]
         [SerializeField]
@@ -34,16 +31,8 @@ namespace _Game.Scripts.Management
         [SerializeField]
         private ItemIndicator _indicatorPrefab;
 
-        [Header("Item Requirements")]
-        [Tooltip("List of required items and their quantities.")]
-        [SerializeField]
-        private List<ItemRequirement> _itemRequirements;
-
-        [Tooltip("List of all required items")]
-        [SerializeField]
-        private List<Item> _requireItems;
-
         private Dictionary<int, ItemIndicator> _itemIndicators = new Dictionary<int, ItemIndicator>();
+        private Dictionary<int, int> _requiredItemCounts = new Dictionary<int, int>();
 
         private int _currentLevelIndex = 0;
 
@@ -55,51 +44,33 @@ namespace _Game.Scripts.Management
         {
             StartTimer(_levelConfig.InitialTime);
 
-            if (_tutorial)
-                _tutorial.Open();
-
-            SetRequireItems();
-
             CreateItemIndicators();
-        }
-
-        /// <summary>
-        /// Populates the _requireItems list based on _itemRequirements.
-        /// Items are added to _requireItems according to their quantity in _itemRequirements.
-        /// </summary>
-        private void SetRequireItems()
-        {
-            // Clear the list to avoid duplication or stale data
-            _requireItems.Clear();
-
-            // Iterate through the item requirements
-            foreach (var requirement in _itemRequirements)
-            {
-                // Add the item to the list as many times as specified by the quantity
-                for (int i = 0; i < requirement.Quantity; i++)
-                {
-                    _requireItems.Add(requirement.Item);
-                }
-            }
-
-            // Optionally, you can use DOTween for animations or other effects here
-            // For example, if you want to animate the addition of items
-            // DOTween.Sequence()...
         }
 
         private void CreateItemIndicators()
         {
-            foreach (var itemRequirement in _itemRequirements)
+            // Clear existing item indicators and required item counts
+            _itemIndicators.Clear();
+            _requiredItemCounts.Clear();
+
+            foreach (var itemData in _levelConfig.ItemDataList)
             {
-                // Instantiate indicator prefab
-                var currentIndicator = Instantiate(_indicatorPrefab, _indicatorsParent);
-                var itemIndicator = currentIndicator;
+                if (itemData.IsRequired)
+                {
+                    // Instantiate indicator prefab
+                    var currentIndicator = Instantiate(_indicatorPrefab, _indicatorsParent);
+                    var itemIndicator = currentIndicator;
 
-                // Set up the indicator
-                itemIndicator.SetIcon(itemRequirement.Item.ItemIcon);
-                itemIndicator.SetText(itemRequirement.Quantity.ToString());
+                    // Set up the indicator
+                    itemIndicator.SetIcon(itemData.ItemPrefab.ItemIcon);
+                    itemIndicator.SetText(itemData.ItemCount.ToString());
 
-                _itemIndicators[itemRequirement.Item.ItemId] = itemIndicator;
+                    // Store the indicator by item ID
+                    _itemIndicators[itemData.ItemPrefab.ItemId] = itemIndicator;
+
+                    // Store the required item count
+                    _requiredItemCounts[itemData.ItemPrefab.ItemId] = itemData.ItemCount;
+                }
             }
         }
 
@@ -140,15 +111,13 @@ namespace _Game.Scripts.Management
         /// Adds extra time to the current timer.
         /// </summary>
         /// <param name="extraTimeInSeconds">The additional time to add, in seconds.</param>
-
         public void AddExtraTime(float extraTimeInSeconds)
         {
             _currentLevelTime += extraTimeInSeconds;
             if (!_isTimerRunning)
             {
                 _isTimerRunning = true;
-                InvokeRepeating(nameof(UpdateTimer), _levelConfig.UpdateInterval,
-                    _levelConfig.UpdateInterval);
+                InvokeRepeating(nameof(UpdateTimer), _levelConfig.UpdateInterval, _levelConfig.UpdateInterval);
             }
 
             OnTimerUpdated?.Invoke(_currentLevelTime, _levelConfig.CriticalTimeThreshold);
@@ -178,7 +147,7 @@ namespace _Game.Scripts.Management
         public void LevelComplete()
         {
             OnLevelCompleted?.Invoke();
-            Debug.Log("Level CompleteD!");
+            Debug.Log("Level Completed!");
         }
 
         /// <summary>
@@ -205,7 +174,7 @@ namespace _Game.Scripts.Management
         public void Restart()
         {
             Time.timeScale = 1;
-            // Add logic to reload the current level here
+            // Reload the current level
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             Debug.Log("Game Restarted");
         }
@@ -216,10 +185,9 @@ namespace _Game.Scripts.Management
         public void Next()
         {
             Time.timeScale = 1;
-            // Add logic to reload the current level here
-            SceneManager.LoadScene((SceneManager.GetActiveScene().buildIndex + 1) %
-                SceneManager.sceneCountInBuildSettings);
-            Debug.Log("Game Restarted");
+            // Load the next level
+            SceneManager.LoadScene((SceneManager.GetActiveScene().buildIndex + 1) % SceneManager.sceneCountInBuildSettings);
+            Debug.Log("Next Level");
         }
 
         /// <summary>
@@ -228,15 +196,9 @@ namespace _Game.Scripts.Management
         public void Menu()
         {
             Time.timeScale = 1;
-            // Add logic to load the main menu scene here
+            // Load the main menu scene
             SceneManager.LoadScene(0);
             Debug.Log("Navigated to Menu");
-        }
-
-        public void CloseTutorial()
-        {
-            if (_tutorial)
-                _tutorial.Close();
         }
 
         /// <summary>
@@ -247,36 +209,26 @@ namespace _Game.Scripts.Management
         {
             if (_itemIndicators.TryGetValue(item.ItemId, out var itemIndicator))
             {
-                //Debug.Log(item.name + " is required!");
                 itemIndicator.DecreaseQuantity();
 
-                foreach (Item requireItem in _requireItems)
+                // Reduce the count of the required item
+                if (_requiredItemCounts.ContainsKey(item.ItemId))
                 {
-                    if (item.ItemId == requireItem.ItemId)
-                    {
-                        _requireItems.Remove(requireItem);
+                    _requiredItemCounts[item.ItemId]--;
 
-                        if (_requireItems.Count <= 0)
+                    // If the count reaches zero, remove the item from required items
+                    if (_requiredItemCounts[item.ItemId] <= 0)
+                    {
+                        _requiredItemCounts.Remove(item.ItemId);
+
+                        // Check if all required items are collected
+                        if (_requiredItemCounts.Count <= 0)
                         {
                             LevelComplete();
                         }
-                        break;
                     }
                 }
             }
         }
     }
-}
-
-/// <summary>
-/// Represents the item requirement for the level.
-/// </summary>
-[System.Serializable]
-public class ItemRequirement
-{
-    [Tooltip("The item to be collected.")]
-    public Item Item;
-
-    [Tooltip("The quantity of this item required.")]
-    public int Quantity;
 }
