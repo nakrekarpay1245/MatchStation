@@ -1445,8 +1445,10 @@ MonoBehaviour:
   _levelFailText: {fileID: 1459869360}
   _gamePausedText: {fileID: 562416819}
   _levelTimeText: {fileID: 314975293}
-  _initialTime: 300
+  _criticalTimeColor: {r: 1, g: 0, b: 0, a: 1}
+  _initialTime: 10
   _updateInterval: 1
+  _criticalTimeThreshold: 10
   _tutorial: {fileID: 0}
   _indicatorsParent: {fileID: 301109651}
   _indicatorPrefab: {fileID: 7118108009690645277, guid: ac02d2be35a279d48be4287acbdf7028,

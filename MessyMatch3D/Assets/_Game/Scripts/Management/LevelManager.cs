@@ -45,16 +45,23 @@ namespace _Game.Scripts.Management
         [SerializeField, Tooltip("Game pause text UI element")]
         private TextMeshProUGUI _gamePausedText;
 
-        [Header("UI Elements")]
+        [Header("Timer Settings")]
+        [Header("UI")]
         [Tooltip("Text component to display the remaining level time.")]
         [SerializeField] private TextMeshProUGUI _levelTimeText;
 
-        [Header("Timer Settings")]
+        [Tooltip("Text color when the time is below the critical threshold.")]
+        [SerializeField] private Color _criticalTimeColor = Color.red;
+
         [Tooltip("Initial time for the level in seconds.")]
         [SerializeField] private float _initialTime = 300f; // 5 minutes
 
+        [Header("Logic")]
         [Tooltip("Update interval for the timer in seconds.")]
         [SerializeField] private float _updateInterval = 1f;
+
+        [Tooltip("Critical time threshold in seconds.")]
+        [SerializeField] private float _criticalTimeThreshold = 10f;
 
         private float _currentLevelTime;
         private bool _isTimerRunning;
@@ -172,6 +179,7 @@ namespace _Game.Scripts.Management
                 _currentLevelTime = 0;
                 _isTimerRunning = false;
                 CancelInvoke(nameof(UpdateTimer));
+                LevelFail();
             }
 
             UpdateTimerDisplay();
@@ -185,6 +193,13 @@ namespace _Game.Scripts.Management
             int minutes = Mathf.FloorToInt(_currentLevelTime / 60);
             int seconds = Mathf.FloorToInt(_currentLevelTime % 60);
             _levelTimeText.text = $"{minutes:D2}:{seconds:D2}";
+
+            if (_currentLevelTime <= _criticalTimeThreshold)
+            {
+                _levelTimeText.color = _criticalTimeColor;
+                _levelTimeText.rectTransform.DOPunchScale(Vector3.one * 0.2f, 0.5f, 1, 0).
+                    SetEase(Ease.InOutQuad).SetLoops(2, LoopType.Yoyo);
+            }
         }
 
         /// <summary>
@@ -373,6 +388,7 @@ namespace _Game.Scripts.Management
         }
     }
 }
+
 /// <summary>
 /// Represents the item requirement for the level.
 /// </summary>
