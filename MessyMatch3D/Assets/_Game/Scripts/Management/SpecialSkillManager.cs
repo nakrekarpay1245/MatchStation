@@ -36,6 +36,10 @@ namespace _Game.Scripts.Management
         [SerializeField] private LeafButton _freezeTimeButton;
         [Tooltip("Duration for which the time is frozen.")]
         [SerializeField, Range(1f, 20f)] private float _timeFreezeDuration = 10f;
+        [SerializeField, Tooltip("")]
+        private string _freezeEffectParticleKey = "Freeze";
+        [SerializeField, Tooltip("")]
+        private string _itemShakerParticleKey = "ItemShaker";
 
         private void Awake()
         {
@@ -74,6 +78,11 @@ namespace _Game.Scripts.Management
 
             shakerSequence.Append(_itemShaker.DOMoveY(_itemShaker.position.y + _shakerHeightChangeAmount,
                 _shakerMovementDuration).SetEase(Ease.Linear));
+            shakerSequence.AppendCallback(() =>
+            {
+                GlobalBinder.singleton.ParticleManager.PlayParticleAtPoint(_itemShakerParticleKey,
+                    Vector3.up * 2 + Vector3.forward);
+            });
             shakerSequence.Join(_itemShaker.DORotate(new Vector3(0, 360, 0),
                 _shakerRotationDuration, RotateMode.LocalAxisAdd).SetEase(Ease.Linear));
             shakerSequence.Append(_itemShaker.DOMoveY(_itemShaker.position.y,
@@ -99,6 +108,8 @@ namespace _Game.Scripts.Management
             Debug.Log("FreezeTime skill activated.");
             GlobalBinder.singleton.TimeManager.FreezeTimer(_timeFreezeDuration);
             GlobalBinder.singleton.UIManager.ActivateFreezeScreen(_timeFreezeDuration, 1f, 1f);
+            GlobalBinder.singleton.ParticleManager.PlayParticleAtPoint(_freezeEffectParticleKey,
+                Vector2.up * 2);
         }
     }
 }

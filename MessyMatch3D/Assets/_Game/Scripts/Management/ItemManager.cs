@@ -44,6 +44,11 @@ namespace _Game.Scripts.Management
         [SerializeField, Tooltip("Height at which items are spawned.")]
         private float _spawnHeight = 1f;
 
+        [Header("Effects")]
+        [Header("Particle Effects")]
+        [SerializeField, Tooltip("")]
+        private string _itemRecycleParticle = "ItemRecycle";
+
         private void Start()
         {
             StartCoroutine(SpawnItemsRoutine());
@@ -182,7 +187,11 @@ namespace _Game.Scripts.Management
         {
             if (_collectedItems.Any())
             {
-                RecycleItem(_collectedItems.Last());
+                Item _lastCollectedItem = _collectedItems.Last();
+                RecycleItem(_lastCollectedItem);
+
+                GlobalBinder.singleton.ParticleManager.PlayParticleAtPoint(_itemRecycleParticle,
+                    _lastCollectedItem.transform.position);
             }
         }
 
