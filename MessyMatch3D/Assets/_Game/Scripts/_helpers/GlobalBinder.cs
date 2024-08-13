@@ -25,5 +25,8 @@ namespace _Game.Scripts._helpers
 
         [Header("Time")]
         public TimeManager TimeManager;
+
+        [Header("Time")]
+        public UIManager UIManager;
     }
 }

@@ -45,6 +45,10 @@ namespace _Game.Scripts.Management
         [Tooltip("Text color when the time is below the critical threshold.")]
         [SerializeField] private Color _criticalTimeColor = Color.red;
 
+        [Header("Freeze Screen Reference")]
+        [Tooltip("The CanvasGroup representing the freeze screen.")]
+        [SerializeField]
+        private CanvasGroup _freezeScreen;
         private void Start()
         {
             // Initialize buttons with corresponding functions
@@ -206,6 +210,35 @@ namespace _Game.Scripts.Management
         public void Menu()
         {
             GlobalBinder.singleton.LevelManager.Menu();
+        }
+
+        /// <summary>
+        /// Activates the freeze screen by fading it in, keeping it visible for a set duration, 
+        /// and then fading it out.
+        /// </summary>
+        public void ActivateFreezeScreen(float totalDuration, float fadeInDuration, float fadeOutDuration)
+        {
+            // Ensure the CanvasGroup is active and starts invisible
+            _freezeScreen.gameObject.SetActive(true);
+            _freezeScreen.alpha = 0;
+
+            // Sequence to manage the fade in, wait, and fade out
+            Sequence freezeSequence = DOTween.Sequence();
+
+            // Fade in
+            freezeSequence.Append(_freezeScreen.DOFade(1, fadeInDuration));
+
+            // Wait for the duration
+            freezeSequence.AppendInterval(totalDuration);
+
+            // Fade out
+            freezeSequence.Append(_freezeScreen.DOFade(0, fadeOutDuration));
+
+            // Deactivate after fade out
+            freezeSequence.OnComplete(() => _freezeScreen.gameObject.SetActive(false));
+
+            // Start the sequence
+            freezeSequence.Play();
         }
     }
 }
