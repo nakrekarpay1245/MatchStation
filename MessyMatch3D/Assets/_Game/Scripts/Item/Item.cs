@@ -1,5 +1,7 @@
+using _Game.Scripts._helpers;
 using _Game.Scripts.Tiles;
 using DG.Tweening;
+using Unity.Burst.CompilerServices;
 using UnityEngine;
 
 namespace _Game.Scripts.Items
@@ -64,7 +66,15 @@ namespace _Game.Scripts.Items
             {
                 _itemTile = value;
                 Vector3 itemPosition = _itemTile ? _itemTile.transform.position : Vector3.zero;
+
+                if (IsCollectable)
+                {
+                    GlobalBinder.singleton.ParticleManager.PlayParticleAtPoint(_itemCollectParticleKey,
+                            transform.position);
+                }
+
                 transform.DOMove(itemPosition + _itemPositionOffset, _itemMoveDuration);
+
                 transform.DORotate(Vector3.zero, _itemMoveDuration);
             }
         }
@@ -80,6 +90,11 @@ namespace _Game.Scripts.Items
 
         private bool _isCollectable = true;
         public bool IsCollectable { get => _isCollectable; private set => _isCollectable = value; }
+
+        [Header("Effects")]
+        [Header("Particle Effects")]
+        [SerializeField, Tooltip("")]
+        private string _itemCollectParticleKey = "ItemCollect";
 
         private Rigidbody _rigidbody;
 

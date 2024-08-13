@@ -2181,7 +2181,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &832575518
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4493,6 +4493,7 @@ MonoBehaviour:
   - {fileID: 1990287022}
   _matchMoveAnimationDuration: 0.3
   _matchScaleAnimationDuration: 0.125
+  _itemMatchParticleKey: ItemMatch
 --- !u!114 &1739847986 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2242584232014739553, guid: f043ede2293358742924a3c4e2e35fe2,
@@ -5160,7 +5161,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd811c883a9092d4f93682e6ad5d99b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ParticleDataList: []
+  ParticleDataList:
+  - ParticleSystem: {fileID: 8653458764756402255, guid: c87a9fb9c7aca2c4a827c20a7a08a14f,
+      type: 3}
+    ParticleCount: 10
+    ParticleName: ItemCollect
+  - ParticleSystem: {fileID: 8653458764756402255, guid: ab59dbb6d4d17aa46ad4562dba0687e5,
+      type: 3}
+    ParticleCount: 10
+    ParticleName: ItemMatch
   ParticleList: []
 --- !u!4 &2028953738
 Transform:

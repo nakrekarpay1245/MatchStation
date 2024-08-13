@@ -119,6 +119,7 @@ namespace _Game.Scripts.Management
                 var collectable = hit.collider.GetComponent<ICollectable>();
                 if (collectable != null)
                 {
+
                     Collect(collectable);
                 }
             });

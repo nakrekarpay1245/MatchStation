@@ -4,7 +4,7 @@ using _Game.Scripts.Items;
 
 namespace _Game.Scripts.Data
 {
-    [CreateAssetMenu(fileName = "LevelConfig", menuName = "_Data/LevelConfig")]
+    [CreateAssetMenu(fileName = "LevelConfig", menuName = "Data/LevelConfig")]
     public class LevelConfig : ScriptableObject
     {
         [Header("Timer Settings")]

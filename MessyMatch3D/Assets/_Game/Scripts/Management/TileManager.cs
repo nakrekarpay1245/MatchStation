@@ -4,6 +4,7 @@ using UnityEngine;
 using DG.Tweening;
 using _Game.Scripts.Tiles;
 using _Game.Scripts.Items;
+using _Game.Scripts._helpers;
 
 namespace _Game.Scripts.Management
 {
@@ -23,6 +24,11 @@ namespace _Game.Scripts.Management
         private float _matchMoveAnimationDuration = 0.5f;
         [SerializeField]
         private float _matchScaleAnimationDuration = 0.25f;
+
+        [Header("Effects")]
+        [Header("Particle Effects")]
+        [SerializeField, Tooltip("")]
+        private string _itemMatchParticleKey = "ItemMatch";
 
         /// <summary>
         /// Aligns tiles by collecting all items, sorting them by type, and reassigning them to the tiles.
@@ -57,9 +63,6 @@ namespace _Game.Scripts.Management
 
                     // Animate the item moving to its new position
                     items[i].ItemTile = _activeTileList[i];
-
-                    //items[i].transform.DOMove(_activeTileList[i].transform.position + Vector3.up,
-                    //    _itemMoveDuration).SetEase(Ease.InOutQuad);
                 }
 
                 // Check for matching items in a row
@@ -128,6 +131,12 @@ namespace _Game.Scripts.Management
                 SetEase(Ease.InOutBounce));
             sequence.Join(item3.transform.DOScale(Vector3.zero, _matchScaleAnimationDuration).
                 SetEase(Ease.InOutBounce));
+
+            sequence.AppendCallback(() =>
+            {
+                GlobalBinder.singleton.ParticleManager.PlayParticleAtPoint(_itemMatchParticleKey,
+                    item2.transform.position);
+            });
 
             // Deactivate items after the animation completes
             sequence.OnComplete(() =>
