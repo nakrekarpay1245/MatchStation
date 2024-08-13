@@ -1,8 +1,5 @@
-using _Game.Scripts._Data;
+using _Game.Scripts.Data;
 using _Game.Scripts._helpers;
-using _Game.Scripts.Items;
-using _Game.Scripts.Tiles;
-using DG.Tweening;
 using UnityEngine;
 
 namespace _Game.Scripts.Management
@@ -43,9 +40,7 @@ namespace _Game.Scripts.Management
         [SerializeField]
         private PlayerInput _playerInput;
 
-        private Item _lastHoveredItem;
-        private Item _currentlySelectedItem;
-
+        private ISelectable _lastSelectable;
         private void OnEnable()
         {
             _playerInput.OnMouseDown += HandleMouseButtonDown;
@@ -62,25 +57,21 @@ namespace _Game.Scripts.Management
 
         private void HandleMouseButtonDown()
         {
-            CheckForItemAtMouse();
-        }
+            if (_selectionCamera == null) return;
 
-        private void HandleMouseButton()
-        {
-            CheckForItemAtMouse();
-        }
-
-        private void HandleMouseButtonUp()
-        {
-            CheckForItemAtMouse();
-
-            if (_currentlySelectedItem != null)
+            Ray ray = _selectionCamera.ScreenPointToRay(_playerInput.MousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hit, _raycastLength, _raycastLayerMask))
             {
-                Collect(_currentlySelectedItem);
+                var selectable = hit.collider.GetComponent<ISelectable>();
+                if (selectable != null)
+                {
+                    _lastSelectable = selectable;
+                    Select(selectable);
+                }
             }
         }
 
-        private void CheckForItemAtMouse()
+        private void HandleMouseButton()
         {
             if (_selectionCamera == null) return;
 
@@ -90,55 +81,60 @@ namespace _Game.Scripts.Management
                 var selectable = hit.collider.GetComponent<ISelectable>();
                 if (selectable != null)
                 {
-                    _lastHoveredItem = selectable as Item;
-                    Select(_lastHoveredItem);
+                    if (_lastSelectable != selectable)
+                    {
+                        if (_lastSelectable != null)
+                        {
+                            DeSelect(_lastSelectable);
+                        }
+                        _lastSelectable = selectable;
+                    }
+
+                    Select(selectable);
                 }
                 else
                 {
-                    DeSelectCurrentItem();
+                    if (_lastSelectable != null)
+                    {
+                        DeSelect(_lastSelectable);
+                    }
                 }
-            }
-            else
-            {
-                DeSelectCurrentItem();
             }
         }
 
-        private void DeSelectCurrentItem()
+        private void HandleMouseButtonUp()
         {
-            if (_currentlySelectedItem != null)
+            if (_lastSelectable != null)
             {
-                DeSelect(_currentlySelectedItem);
-                _currentlySelectedItem = null;
+                DeSelect(_lastSelectable);
+            }
+
+            if (_selectionCamera == null) return;
+
+            Ray ray = _selectionCamera.ScreenPointToRay(_playerInput.MousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hit, _raycastLength, _raycastLayerMask))
+            {
+                var collectable = hit.collider.GetComponent<ICollectable>();
+                if (collectable != null)
+                {
+                    Collect(collectable);
+                }
             }
         }
 
         public void Select(ISelectable selectable)
         {
-            Item item = selectable as Item;
-            if (item == null) return;
-
-            _currentlySelectedItem = item;
-            _currentlySelectedItem.Select();
+            selectable.Select();
         }
 
         public void DeSelect(ISelectable selectable)
         {
-            Item item = selectable as Item;
-
-            if (item == null) return;
-
-            item.DeSelect();
+            selectable.DeSelect();
         }
 
         public void Collect(ICollectable collectable)
         {
-            Item item = collectable as Item;
-            if (item == null || !item.IsCollectable) return;
-
-            GlobalBinder.singleton.ItemManager.CollectItem(item);
-
-            GlobalBinder.singleton.TileManager.AlignMatchingItems();
+            GlobalBinder.singleton.ItemManager.Collect(collectable);
         }
 
         private void OnDrawGizmos()

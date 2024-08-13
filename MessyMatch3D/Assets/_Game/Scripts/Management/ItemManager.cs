@@ -14,7 +14,7 @@ namespace _Game.Scripts.Management
     /// Manages the creation and management of items in the game.
     /// Ensures items are created at specified intervals and organized into required and normal categories.
     /// </summary>
-    public class ItemManager : MonoBehaviour
+    public class ItemManager : MonoBehaviour, ICollector
     {
         [Header("Level Configuration")]
         [SerializeField]
@@ -180,8 +180,11 @@ namespace _Game.Scripts.Management
         /// Otherwise, it is removed from the _activeNormalItems list.
         /// </summary>
         /// <param name="collectedItem">The item to be collected.</param>
-        public void CollectItem(Item collectedItem)
+        public void Collect(ICollectable collectable)
         {
+            Item collectedItem = collectable as Item;
+            if (collectedItem == null || !collectedItem.IsCollectable) return;
+
             Tile emptyTile = GlobalBinder.singleton.TileManager.FindEmptyTile();
             if (emptyTile != null)
             {
@@ -190,6 +193,7 @@ namespace _Game.Scripts.Management
                 collectedItem.Collect();
 
                 GlobalBinder.singleton.LevelManager.UpdateItemCollection(collectedItem);
+                GlobalBinder.singleton.TileManager.AlignMatchingItems();
 
                 if (_activeItems.Remove(collectedItem))
                 {

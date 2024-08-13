@@ -1,4 +1,4 @@
-using _Game.Scripts._Data;
+using _Game.Scripts.Data;
 using UnityEngine;
 
 namespace _Game.Scripts
