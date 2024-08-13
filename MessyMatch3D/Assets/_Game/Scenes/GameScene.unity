@@ -1668,6 +1668,8 @@ MonoBehaviour:
   - {x: -3.5, y: 2, z: -2}
   _fireworksParticleKey: Fireworks
   _fireworksClipKey: Fireworks
+  _levelCompleteClipKey: LevelComplete
+  _levelFailClipKey: LevelFail
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -2174,37 +2176,50 @@ MonoBehaviour:
     Loop: 0
   - Name: ItemMatch
     _clipArray:
-    - {fileID: 8300000, guid: 412e56a7a55798e43ad9a7e6f13f72c4, type: 3}
+    - {fileID: 8300000, guid: 61e006058500f3f4b8e86ad0038752c1, type: 3}
     Volume: 1
     Pitch: 1
     Loop: 0
   - Name: ItemRecycle
     _clipArray:
-    - {fileID: 8300000, guid: 5dd17999496f84e4a97c04667db0bbdf, type: 3}
+    - {fileID: 8300000, guid: 2b267ad6821f15945b01f6e75353d00f, type: 3}
     Volume: 1
     Pitch: 1
     Loop: 0
   - Name: Freeze
     _clipArray:
-    - {fileID: 8300000, guid: f01131f5965cdba49875c263ef726373, type: 3}
+    - {fileID: 8300000, guid: 53aa7a6ba922b3242a5b833fbb313277, type: 3}
     Volume: 1
     Pitch: 1
     Loop: 0
   - Name: ItemShaker
     _clipArray:
-    - {fileID: 8300000, guid: 673ad3e4783594c43a7f7cffeef408e6, type: 3}
+    - {fileID: 8300000, guid: dd8c717746c282e4890bfbb287ba2d35, type: 3}
     Volume: 1
     Pitch: 1
     Loop: 0
   - Name: Fireworks
     _clipArray:
-    - {fileID: 8300000, guid: 7e8319b0a516ad94f94d3b0a7a3ba254, type: 3}
+    - {fileID: 8300000, guid: b91b69c389f1c434e8596972c887efae, type: 3}
     Volume: 1
     Pitch: 1
     Loop: 0
   - Name: ItemDestroy
     _clipArray:
-    - {fileID: 8300000, guid: f85af41b72d9fb54fbc73a69328e5262, type: 3}
+    - {fileID: 8300000, guid: 322579b72542c2e47abc2de549cc36e2, type: 3}
+    Volume: 1
+    Pitch: 1
+    Loop: 0
+  - Name: LevelComplete
+    _clipArray:
+    - {fileID: 8300000, guid: 25a6557e175a9e749a19f7a8bc5213d7, type: 3}
+    Volume: 1
+    Pitch: 1
+    Loop: 0
+  - Name: LevelFail
+    _clipArray:
+    - {fileID: 8300000, guid: 472efb25f9fe395449690f26c811e0c0, type: 3}
+    - {fileID: 8300000, guid: b22a6bb951b3fc54586db316c07c0366, type: 3}
     Volume: 1
     Pitch: 1
     Loop: 0

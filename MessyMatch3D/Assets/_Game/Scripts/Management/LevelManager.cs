@@ -45,6 +45,10 @@ namespace _Game.Scripts.Management
         [Header("Audio Effects")]
         [SerializeField, Tooltip("")]
         private string _fireworksClipKey = "Fireworks";
+        [SerializeField, Tooltip("")]
+        private string _levelCompleteClipKey = "LevelComplete";
+        [SerializeField, Tooltip("")]
+        private string _levelFailClipKey = "LevelFail";
 
         private void Start()
         {
@@ -92,6 +96,7 @@ namespace _Game.Scripts.Management
                    _fireworksParticlePositions[i]);
 
                 GlobalBinder.singleton.AudioManager.PlaySound(_fireworksClipKey);
+                GlobalBinder.singleton.AudioManager.PlaySound(_levelCompleteClipKey);
             }
 
             Debug.Log("Level Completed!");
@@ -103,6 +108,7 @@ namespace _Game.Scripts.Management
         public void LevelFail()
         {
             OnLevelFailed?.Invoke();
+            GlobalBinder.singleton.AudioManager.PlaySound(_levelFailClipKey);
             Debug.Log("Level Failed!");
         }
 
