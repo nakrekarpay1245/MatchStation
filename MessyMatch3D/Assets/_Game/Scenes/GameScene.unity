@@ -416,6 +416,7 @@ MonoBehaviour:
   _itemShaker: {fileID: 1638668083}
   _shakerMovementDuration: 0.5
   _shakerRotationDuration: 0.5
+  _shakerHeightChangeAmount: 2
   _recycleItemButton: {fileID: 1030445674}
   _freezeTimeButton: {fileID: 2027130648}
   _timeFreezeDuration: 10
@@ -4558,14 +4559,12 @@ MonoBehaviour:
   _levelConfig: {fileID: 11400000, guid: 93bcb47e3fa51504e9b53893ddd48bdd, type: 2}
   _generatedItems: []
   _activeItems: []
-  _activeRequireItems: []
+  _activeRequiredItems: []
   _activeNormalItems: []
   _collectedItems: []
-  _itemCreationInterval: 0.0052
-  _minHorizontalPosition: -3
-  _maxHorizontalPosition: 3
-  _minVerticalPosition: -2
-  _maxVerticalPosition: 4
+  _itemCreationInterval: 0.001
+  _horizontalSpawnRange: {x: -3, y: 3}
+  _verticalSpawnRange: {x: -2, y: 4}
   _spawnHeight: 1
 --- !u!1 &1927993577
 GameObject:

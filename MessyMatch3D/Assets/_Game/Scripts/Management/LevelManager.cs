@@ -115,7 +115,8 @@ namespace _Game.Scripts.Management
         {
             Time.timeScale = 1;
             // Load the next level
-            SceneManager.LoadScene((SceneManager.GetActiveScene().buildIndex + 1) % SceneManager.sceneCountInBuildSettings);
+            SceneManager.LoadScene((SceneManager.GetActiveScene().buildIndex + 1) %
+                SceneManager.sceneCountInBuildSettings);
             Debug.Log("Next Level");
         }
 
