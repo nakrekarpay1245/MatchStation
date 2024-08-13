@@ -36,6 +36,16 @@ namespace _Game.Scripts.Management
         public UnityAction OnLevelFailed;
         public UnityAction OnLevelCompleted;
 
+        [Header("Effects")]
+        [Header("Particle Effects")]
+        [SerializeField, Tooltip("")]
+        private List<Vector3> _fireworksParticlePositions;
+        [SerializeField, Tooltip("")]
+        private string _fireworksParticleKey = "Fireworks";
+        [Header("Audio Effects")]
+        [SerializeField, Tooltip("")]
+        private string _fireworksClipKey = "Fireworks";
+
         private void Start()
         {
             CreateItemIndicators();
@@ -76,6 +86,14 @@ namespace _Game.Scripts.Management
         public void LevelComplete()
         {
             OnLevelCompleted?.Invoke();
+            for (int i = 0; i < _fireworksParticlePositions.Count; i++)
+            {
+                GlobalBinder.singleton.ParticleManager.PlayParticleAtPoint(_fireworksParticleKey,
+                   _fireworksParticlePositions[i]);
+
+                GlobalBinder.singleton.AudioManager.PlaySound(_fireworksClipKey);
+            }
+
             Debug.Log("Level Completed!");
         }
 

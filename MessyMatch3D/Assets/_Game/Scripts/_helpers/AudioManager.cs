@@ -6,17 +6,18 @@ namespace _Game.Scripts._helpers
 {
     public class AudioManager : MonoBehaviour
     {
+        private List<AudioSource> _audioSources = new List<AudioSource>();
+
+        [Header("Audio Manager Parameters")]
+        [SerializeField]
+        private List<Audio> _audioList = new List<Audio>();
+        [Space]
         [SerializeField]
         private int _maximumAudioCount = 10;
         [SerializeField]
         private float _masterVolume = 1f;
         [SerializeField]
         private bool _isAudioSourceMuted = false;
-
-        [SerializeField]
-        private List<AudioSource> _audioSources = new List<AudioSource>();
-        [SerializeField]
-        private List<Audio> _audioList = new List<Audio>();
 
         [Header("Audio Mixer")]
         [Tooltip("Audio mixer group for sound effects.")]

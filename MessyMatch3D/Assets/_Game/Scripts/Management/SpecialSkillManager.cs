@@ -40,6 +40,10 @@ namespace _Game.Scripts.Management
         private string _freezeEffectParticleKey = "Freeze";
         [SerializeField, Tooltip("")]
         private string _itemShakerParticleKey = "ItemShaker";
+        [SerializeField, Tooltip("")]
+        private string _freezeEffectClipKey = "Freeze";
+        [SerializeField, Tooltip("")]
+        private string _itemShakerClipKey = "ItemShaker";
 
         private void Awake()
         {
@@ -82,6 +86,8 @@ namespace _Game.Scripts.Management
             {
                 GlobalBinder.singleton.ParticleManager.PlayParticleAtPoint(_itemShakerParticleKey,
                     Vector3.up * 2 + Vector3.forward);
+
+                GlobalBinder.singleton.AudioManager.PlaySound(_itemShakerClipKey);
             });
             shakerSequence.Join(_itemShaker.DORotate(new Vector3(0, 360, 0),
                 _shakerRotationDuration, RotateMode.LocalAxisAdd).SetEase(Ease.Linear));
@@ -108,8 +114,11 @@ namespace _Game.Scripts.Management
             Debug.Log("FreezeTime skill activated.");
             GlobalBinder.singleton.TimeManager.FreezeTimer(_timeFreezeDuration);
             GlobalBinder.singleton.UIManager.ActivateFreezeScreen(_timeFreezeDuration, 1f, 1f);
+
             GlobalBinder.singleton.ParticleManager.PlayParticleAtPoint(_freezeEffectParticleKey,
                 Vector2.up * 2);
+
+            GlobalBinder.singleton.AudioManager.PlaySound(_freezeEffectClipKey);
         }
     }
 }

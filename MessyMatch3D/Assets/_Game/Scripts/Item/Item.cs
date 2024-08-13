@@ -1,7 +1,6 @@
 using _Game.Scripts._helpers;
 using _Game.Scripts.Tiles;
 using DG.Tweening;
-using Unity.Burst.CompilerServices;
 using UnityEngine;
 
 namespace _Game.Scripts.Items
@@ -71,6 +70,8 @@ namespace _Game.Scripts.Items
                 {
                     GlobalBinder.singleton.ParticleManager.PlayParticleAtPoint(_itemCollectParticleKey,
                             transform.position);
+
+                    GlobalBinder.singleton.AudioManager.PlaySound(_itemCollectClipKey);
                 }
 
                 transform.DOMove(itemPosition + _itemPositionOffset, _itemMoveDuration);
@@ -95,6 +96,9 @@ namespace _Game.Scripts.Items
         [Header("Particle Effects")]
         [SerializeField, Tooltip("")]
         private string _itemCollectParticleKey = "ItemCollect";
+        [Header("Audio Effects")]
+        [SerializeField, Tooltip("")]
+        private string _itemCollectClipKey = "ItemCollect";
 
         private Rigidbody _rigidbody;
 

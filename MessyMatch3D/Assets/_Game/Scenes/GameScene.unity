@@ -422,6 +422,8 @@ MonoBehaviour:
   _timeFreezeDuration: 10
   _freezeEffectParticleKey: Freeze
   _itemShakerParticleKey: ItemShaker
+  _freezeEffectClipKey: Freeze
+  _itemShakerClipKey: ItemShaker
 --- !u!1 &244201120
 GameObject:
   m_ObjectHideFlags: 0
@@ -1659,6 +1661,13 @@ MonoBehaviour:
   _indicatorsParent: {fileID: 301109651}
   _indicatorPrefab: {fileID: 6255623286210125375, guid: ac02d2be35a279d48be4287acbdf7028,
     type: 3}
+  _fireworksParticlePositions:
+  - {x: 3, y: 4, z: 3}
+  - {x: -3.5, y: 5, z: 2}
+  - {x: 3, y: 3, z: -2.5}
+  - {x: -3.5, y: 2, z: -2}
+  _fireworksParticleKey: Fireworks
+  _fireworksClipKey: Fireworks
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -2150,11 +2159,58 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50ea589026a643c4b8f4023aa3899125, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _audioList:
+  - Name: ItemCollect
+    _clipArray:
+    - {fileID: 8300000, guid: cb4f72a4210b3784d92b49b566a85c47, type: 3}
+    Volume: 1
+    Pitch: 1
+    Loop: 0
+  - Name: ItemPlacement
+    _clipArray:
+    - {fileID: 8300000, guid: bb0c3af1f09cad04eab4d436072b51be, type: 3}
+    Volume: 1
+    Pitch: 1
+    Loop: 0
+  - Name: ItemMatch
+    _clipArray:
+    - {fileID: 8300000, guid: 412e56a7a55798e43ad9a7e6f13f72c4, type: 3}
+    Volume: 1
+    Pitch: 1
+    Loop: 0
+  - Name: ItemRecycle
+    _clipArray:
+    - {fileID: 8300000, guid: 5dd17999496f84e4a97c04667db0bbdf, type: 3}
+    Volume: 1
+    Pitch: 1
+    Loop: 0
+  - Name: Freeze
+    _clipArray:
+    - {fileID: 8300000, guid: f01131f5965cdba49875c263ef726373, type: 3}
+    Volume: 1
+    Pitch: 1
+    Loop: 0
+  - Name: ItemShaker
+    _clipArray:
+    - {fileID: 8300000, guid: 673ad3e4783594c43a7f7cffeef408e6, type: 3}
+    Volume: 1
+    Pitch: 1
+    Loop: 0
+  - Name: Fireworks
+    _clipArray:
+    - {fileID: 8300000, guid: 7e8319b0a516ad94f94d3b0a7a3ba254, type: 3}
+    Volume: 1
+    Pitch: 1
+    Loop: 0
+  - Name: ItemDestroy
+    _clipArray:
+    - {fileID: 8300000, guid: f85af41b72d9fb54fbc73a69328e5262, type: 3}
+    Volume: 1
+    Pitch: 1
+    Loop: 0
   _maximumAudioCount: 10
   _masterVolume: 1
   _isAudioSourceMuted: 0
-  _audioSources: []
-  _audioList: []
   _soundMixerGroup: {fileID: 0}
 --- !u!4 &767483035
 Transform:
@@ -4451,6 +4507,7 @@ MonoBehaviour:
   _matchMoveAnimationDuration: 0.3
   _matchScaleAnimationDuration: 0.125
   _itemMatchParticleKey: ItemMatch
+  _itemMatchClipKey: ItemMatch
 --- !u!114 &1739847986 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2242584232014739553, guid: f043ede2293358742924a3c4e2e35fe2,
@@ -4822,7 +4879,10 @@ MonoBehaviour:
   _horizontalSpawnRange: {x: -3, y: 3}
   _verticalSpawnRange: {x: -2, y: 4}
   _spawnHeight: 1
-  _itemRecycleParticle: ItemRecycle
+  _itemRecycleParticleKey: ItemRecycle
+  _itemDestroyParticleKey: ItemDestroy
+  _itemRecycleClipKey: ItemRecycle
+  _itemDestroyClipKey: ItemDestroy
 --- !u!1 &1927993577
 GameObject:
   m_ObjectHideFlags: 0
@@ -5116,26 +5176,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParticleDataList:
-  - ParticleSystem: {fileID: 8653458764756402255, guid: c87a9fb9c7aca2c4a827c20a7a08a14f,
-      type: 3}
+  - ParticleName: ItemCollect
     ParticleCount: 10
-    ParticleName: ItemCollect
-  - ParticleSystem: {fileID: 8653458764756402255, guid: ab59dbb6d4d17aa46ad4562dba0687e5,
-      type: 3}
+    _particleSystemList:
+    - {fileID: 8653458764756402255, guid: c87a9fb9c7aca2c4a827c20a7a08a14f, type: 3}
+  - ParticleName: ItemMatch
     ParticleCount: 10
-    ParticleName: ItemMatch
-  - ParticleSystem: {fileID: 8375141808237169437, guid: 742b3bdcb0b7cfa4dba11e500e61165c,
-      type: 3}
+    _particleSystemList:
+    - {fileID: 8653458764756402255, guid: ab59dbb6d4d17aa46ad4562dba0687e5, type: 3}
+  - ParticleName: ItemRecycle
     ParticleCount: 1
-    ParticleName: ItemRecycle
-  - ParticleSystem: {fileID: 2253218862502634316, guid: ed88ecc394ea07a4d8b2e612bf7534ef,
-      type: 3}
+    _particleSystemList:
+    - {fileID: 8375141808237169437, guid: 742b3bdcb0b7cfa4dba11e500e61165c, type: 3}
+  - ParticleName: Freeze
     ParticleCount: 1
-    ParticleName: Freeze
-  - ParticleSystem: {fileID: 2253218862502634316, guid: ba8ffa633ef7fef4f8c2e0520e05505f,
-      type: 3}
+    _particleSystemList:
+    - {fileID: 2253218862502634316, guid: ed88ecc394ea07a4d8b2e612bf7534ef, type: 3}
+  - ParticleName: ItemShaker
     ParticleCount: 1
-    ParticleName: ItemShaker
+    _particleSystemList:
+    - {fileID: 2253218862502634316, guid: ba8ffa633ef7fef4f8c2e0520e05505f, type: 3}
+  - ParticleName: Fireworks
+    ParticleCount: 10
+    _particleSystemList:
+    - {fileID: 6061713184971655164, guid: f917ffe61b214054e95c13b0db201347, type: 3}
+    - {fileID: 2446331556981925004, guid: 915f61401158304468282e7c00daccf1, type: 3}
+  - ParticleName: ItemDestroy
+    ParticleCount: 10
+    _particleSystemList:
+    - {fileID: 8653458764756402255, guid: ff180a44aff4e204a8c28bc8dd00aed1, type: 3}
   ParticleList: []
 --- !u!4 &2028953738
 Transform:

@@ -47,7 +47,14 @@ namespace _Game.Scripts.Management
         [Header("Effects")]
         [Header("Particle Effects")]
         [SerializeField, Tooltip("")]
-        private string _itemRecycleParticle = "ItemRecycle";
+        private string _itemRecycleParticleKey = "ItemRecycle";
+        [SerializeField, Tooltip("")]
+        private string _itemDestroyParticleKey = "ItemDestroy";
+        [Header("Audio Effects")]
+        [SerializeField, Tooltip("")]
+        private string _itemRecycleClipKey = "ItemRecycle";
+        [SerializeField, Tooltip("")]
+        private string _itemDestroyClipKey = "ItemDestroy";
 
         private void Start()
         {
@@ -190,8 +197,10 @@ namespace _Game.Scripts.Management
                 Item _lastCollectedItem = _collectedItems.Last();
                 RecycleItem(_lastCollectedItem);
 
-                GlobalBinder.singleton.ParticleManager.PlayParticleAtPoint(_itemRecycleParticle,
+                GlobalBinder.singleton.ParticleManager.PlayParticleAtPoint(_itemRecycleParticleKey,
                     _lastCollectedItem.transform.position);
+
+                GlobalBinder.singleton.AudioManager.PlaySound(_itemRecycleClipKey);
             }
         }
 
@@ -257,6 +266,11 @@ namespace _Game.Scripts.Management
             foreach (var item in itemsToDeactivate)
             {
                 GlobalBinder.singleton.LevelManager.UpdateItemCollection(item);
+
+                GlobalBinder.singleton.ParticleManager.PlayParticleAtPoint(_itemDestroyParticleKey,
+                    item.transform.position);
+
+                GlobalBinder.singleton.AudioManager.PlaySound(_itemDestroyClipKey);
 
                 item.gameObject.SetActive(false);
                 _activeItems.Remove(item);

@@ -29,6 +29,9 @@ namespace _Game.Scripts.Management
         [Header("Particle Effects")]
         [SerializeField, Tooltip("")]
         private string _itemMatchParticleKey = "ItemMatch";
+        [Header("Audio Effects")]
+        [SerializeField, Tooltip("")]
+        private string _itemMatchClipKey = "ItemMatch";
 
         /// <summary>
         /// Aligns tiles by collecting all items, sorting them by type, and reassigning them to the tiles.
@@ -136,6 +139,8 @@ namespace _Game.Scripts.Management
             {
                 GlobalBinder.singleton.ParticleManager.PlayParticleAtPoint(_itemMatchParticleKey,
                     item2.transform.position);
+
+                GlobalBinder.singleton.AudioManager.PlaySound(_itemMatchClipKey);
             });
 
             // Deactivate items after the animation completes
