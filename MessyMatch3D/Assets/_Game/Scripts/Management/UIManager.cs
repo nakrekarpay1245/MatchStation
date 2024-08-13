@@ -1,8 +1,6 @@
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 using DG.Tweening;
-using UnityEngine.SceneManagement;
 using _Game.Scripts._helpers;
 
 namespace _Game.Scripts.Management
@@ -12,59 +10,65 @@ namespace _Game.Scripts.Management
         [Header("UI Elements")]
         [SerializeField, Tooltip("Pause menu UI element")]
         private CanvasGroup _pauseMenu;
-
         [SerializeField, Tooltip("Resume button UI element")]
         private LeafButton _resumeButton;
-
         [SerializeField, Tooltip("Restart button UI element")]
         private LeafButton _restartButton;
-
         [SerializeField, Tooltip("Menu button UI element")]
         private LeafButton _menuButton;
-
-        [SerializeField, Tooltip("Pause button UI element")]
+        [SerializeField, Tooltip("Next level button UI element")]
         private LeafButton _nextButton;
-
         [SerializeField, Tooltip("Pause button UI element")]
         private LeafButton _pauseButton;
-
         [SerializeField, Tooltip("Level complete text UI element")]
         private TextMeshProUGUI _levelCompleteText;
-
         [SerializeField, Tooltip("Level fail text UI element")]
         private TextMeshProUGUI _levelFailText;
-
         [SerializeField, Tooltip("Game pause text UI element")]
         private TextMeshProUGUI _gamePausedText;
 
         [Header("Timer Settings")]
-        [Header("UI")]
-        [Tooltip("Text component to display the remaining level time.")]
-        [SerializeField] private TextMeshProUGUI _levelTimeText;
-
-        [Tooltip("Text color when the time is below the critical threshold.")]
-        [SerializeField] private Color _criticalTimeColor = Color.red;
+        [SerializeField, Tooltip("Text component to display the remaining level time.")]
+        private TextMeshProUGUI _levelTimeText;
+        [SerializeField, Tooltip("Text color when the time is below the critical threshold.")]
+        private Color _criticalTimeColor = Color.red;
 
         [Header("Freeze Screen Reference")]
-        [Tooltip("The CanvasGroup representing the freeze screen.")]
-        [SerializeField]
+        [SerializeField, Tooltip("The CanvasGroup representing the freeze screen.")]
         private CanvasGroup _freezeScreen;
+
         private void Start()
+        {
+            InitializeUI();
+            RegisterEventListeners();
+        }
+
+        /// <summary>
+        /// Initializes the UI elements by setting their initial states.
+        /// </summary>
+        private void InitializeUI()
         {
             // Initialize buttons with corresponding functions
             InitializeButtons();
 
             // Hide pause menu and end level texts at the start
-            _pauseMenu.alpha = 0;
-            _pauseMenu.gameObject.SetActive(false);
-            _levelCompleteText.gameObject.SetActive(false);
-            _levelFailText.gameObject.SetActive(false);
-            _gamePausedText.gameObject.SetActive(false);
+            SetCanvasGroupVisibility(_pauseMenu, false);
+            SetUIElementVisibility(_levelCompleteText, false);
+            SetUIElementVisibility(_levelFailText, false);
+            SetUIElementVisibility(_gamePausedText, false);
+        }
 
-            //LevelManager Events
-            GlobalBinder.singleton.LevelManager.OnLevelCompleted += LevelComplete;
-            GlobalBinder.singleton.LevelManager.OnLevelFailed += LevelFail;
-            GlobalBinder.singleton.TimeManager.OnTimerUpdated += UpdateTimerDisplay;
+        /// <summary>
+        /// Registers event listeners for the LevelManager and TimeManager.
+        /// </summary>
+        private void RegisterEventListeners()
+        {
+            var levelManager = GlobalBinder.singleton.LevelManager;
+            var timeManager = GlobalBinder.singleton.TimeManager;
+
+            levelManager.OnLevelCompleted += HandleLevelComplete;
+            levelManager.OnLevelFailed += HandleLevelFail;
+            timeManager.OnTimerUpdated += UpdateTimerDisplay;
         }
 
         /// <summary>
@@ -72,16 +76,14 @@ namespace _Game.Scripts.Management
         /// </summary>
         private void InitializeButtons()
         {
-            // Assign corresponding functions to each button's onClick event
             AddButtonListener(_resumeButton, Resume);
             AddButtonListener(_restartButton, Restart);
-            AddButtonListener(_menuButton, Menu);
-            AddButtonListener(_nextButton, Next);
+            AddButtonListener(_menuButton, NavigateToMenu);
+            AddButtonListener(_nextButton, StartNextLevel);
             AddButtonListener(_pauseButton, Pause);
         }
 
-        /// <summ
-        /// ary>
+        /// <summary>
         /// Adds a listener to the button using LeafButton's onClick event.
         /// </summary>
         /// <param name="button">The LeafButton component to add the listener to.</param>
@@ -102,27 +104,49 @@ namespace _Game.Scripts.Management
 
             if (currentLevelTime <= criticalTimeThreshold)
             {
-                _levelTimeText.color = _criticalTimeColor;
-                _levelTimeText.rectTransform.DOPunchScale(Vector3.one * 0.2f, 0.5f, 1, 0).
-                    SetEase(Ease.InOutQuad).SetLoops(2, LoopType.Yoyo);
+                ApplyCriticalTimeEffects();
             }
         }
 
         /// <summary>
-        /// Marks the level as complete and shows the completion UI.
+        /// Applies visual effects when the timer is below the critical threshold.
         /// </summary>
-        public void LevelComplete()
+        private void ApplyCriticalTimeEffects()
         {
-            _levelCompleteText.gameObject.SetActive(true);
-            _levelFailText.gameObject.SetActive(false);
-            _pauseMenu.gameObject.SetActive(true);
-            _gamePausedText.gameObject.SetActive(false);
+            _levelTimeText.color = _criticalTimeColor;
+            _levelTimeText.rectTransform.DOPunchScale(Vector3.one * 0.2f, 0.5f, 1, 0)
+                .SetEase(Ease.InOutQuad).SetLoops(2, LoopType.Yoyo);
+        }
 
+        /// <summary>
+        /// Handles the logic when the level is completed.
+        /// </summary>
+        private void HandleLevelComplete()
+        {
+            SetUIElementVisibility(_levelCompleteText, true);
+            SetUIElementVisibility(_levelFailText, false);
+            SetCanvasGroupVisibility(_pauseMenu, true);
+
+            ConfigureButtonsForLevelEnd();
+            AnimateUIOnLevelComplete();
+        }
+
+        /// <summary>
+        /// Configures buttons to display after the level ends.
+        /// </summary>
+        private void ConfigureButtonsForLevelEnd()
+        {
             _resumeButton.gameObject.SetActive(false);
             _restartButton.gameObject.SetActive(true);
             _menuButton.gameObject.SetActive(true);
             _nextButton.gameObject.SetActive(true);
+        }
 
+        /// <summary>
+        /// Animates the UI when the level is completed.
+        /// </summary>
+        private void AnimateUIOnLevelComplete()
+        {
             _pauseMenu.DOFade(1, 1f).OnComplete(() =>
             {
                 _levelCompleteText.DOFade(1, 1f).SetDelay(2f);
@@ -130,20 +154,34 @@ namespace _Game.Scripts.Management
         }
 
         /// <summary>
-        /// Marks the level as fail and shows the completion UI.
+        /// Handles the logic when the level fails.
         /// </summary>
-        public void LevelFail()
+        private void HandleLevelFail()
         {
-            _levelFailText.gameObject.SetActive(true);
-            _levelCompleteText.gameObject.SetActive(false);
-            _pauseMenu.gameObject.SetActive(true);
-            _gamePausedText.gameObject.SetActive(false);
+            SetUIElementVisibility(_levelFailText, true);
+            SetUIElementVisibility(_levelCompleteText, false);
+            SetCanvasGroupVisibility(_pauseMenu, true);
 
+            ConfigureButtonsForLevelFail();
+            AnimateUIOnLevelFail();
+        }
+
+        /// <summary>
+        /// Configures buttons to display after the level fails.
+        /// </summary>
+        private void ConfigureButtonsForLevelFail()
+        {
             _resumeButton.gameObject.SetActive(false);
             _nextButton.gameObject.SetActive(false);
             _restartButton.gameObject.SetActive(true);
             _menuButton.gameObject.SetActive(true);
+        }
 
+        /// <summary>
+        /// Animates the UI when the level fails.
+        /// </summary>
+        private void AnimateUIOnLevelFail()
+        {
             _pauseMenu.DOFade(1, 1f).OnComplete(() =>
             {
                 _levelFailText.DOFade(1, 1f).SetDelay(2f);
@@ -155,19 +193,11 @@ namespace _Game.Scripts.Management
         /// </summary>
         public void Pause()
         {
-            _pauseMenu.gameObject.SetActive(true);
-            _gamePausedText.gameObject.SetActive(true);
+            SetCanvasGroupVisibility(_pauseMenu, true);
+            SetUIElementVisibility(_gamePausedText, true);
+            ToggleGameElementsForPause(true);
 
-            _pauseButton.gameObject.SetActive(false);
-            _nextButton.gameObject.SetActive(false);
-
-            Sequence pauseSequence = DOTween.Sequence();
-            pauseSequence.Append(_pauseMenu.DOFade(1, 0.5f))
-                          .AppendCallback(() =>
-                          {
-                              Time.timeScale = 0;
-                          })
-                          .OnComplete(() => Debug.Log("Game Paused"));
+            AnimatePauseMenuIn();
         }
 
         /// <summary>
@@ -176,17 +206,45 @@ namespace _Game.Scripts.Management
         public void Resume()
         {
             Time.timeScale = 1;
-            _pauseButton.gameObject.SetActive(true);
-            Sequence resumeSequence = DOTween.Sequence();
-            resumeSequence.Append(_pauseMenu.DOFade(0, 0.5f))
-                          .OnComplete(() =>
-                          {
-                              _gamePausedText.gameObject.SetActive(false);
-                              _pauseMenu.gameObject.SetActive(false);
-                              Debug.Log("Game Resumed");
-                          });
+            ToggleGameElementsForPause(false);
+
+            AnimatePauseMenuOut();
         }
 
+        /// <summary>
+        /// Toggles the visibility of game elements when the game is paused or resumed.
+        /// </summary>
+        private void ToggleGameElementsForPause(bool isPaused)
+        {
+            _pauseButton.gameObject.SetActive(!isPaused);
+            _nextButton.gameObject.SetActive(!isPaused);
+        }
+
+        /// <summary>
+        /// Animates the pause menu fading in.
+        /// </summary>
+        private void AnimatePauseMenuIn()
+        {
+            DOTween.Sequence()
+                   .Append(_pauseMenu.DOFade(1, 0.5f))
+                   .AppendCallback(() => Time.timeScale = 0)
+                   .OnComplete(() => Debug.Log("Game Paused"));
+        }
+
+        /// <summary>
+        /// Animates the pause menu fading out.
+        /// </summary>
+        private void AnimatePauseMenuOut()
+        {
+            DOTween.Sequence()
+                   .Append(_pauseMenu.DOFade(0, 0.5f))
+                   .OnComplete(() =>
+                   {
+                       SetUIElementVisibility(_gamePausedText, false);
+                       SetCanvasGroupVisibility(_pauseMenu, false);
+                       Debug.Log("Game Resumed");
+                   });
+        }
 
         /// <summary>
         /// Restarts the current level.
@@ -199,7 +257,7 @@ namespace _Game.Scripts.Management
         /// <summary>
         /// Starts the next level.
         /// </summary>
-        public void Next()
+        public void StartNextLevel()
         {
             GlobalBinder.singleton.LevelManager.Next();
         }
@@ -207,7 +265,7 @@ namespace _Game.Scripts.Management
         /// <summary>
         /// Navigates to the main menu.
         /// </summary>
-        public void Menu()
+        public void NavigateToMenu()
         {
             GlobalBinder.singleton.LevelManager.Menu();
         }
@@ -218,27 +276,31 @@ namespace _Game.Scripts.Management
         /// </summary>
         public void ActivateFreezeScreen(float totalDuration, float fadeInDuration, float fadeOutDuration)
         {
-            // Ensure the CanvasGroup is active and starts invisible
             _freezeScreen.gameObject.SetActive(true);
             _freezeScreen.alpha = 0;
 
-            // Sequence to manage the fade in, wait, and fade out
             Sequence freezeSequence = DOTween.Sequence();
-
-            // Fade in
             freezeSequence.Append(_freezeScreen.DOFade(1, fadeInDuration));
-
-            // Wait for the duration
             freezeSequence.AppendInterval(totalDuration);
-
-            // Fade out
             freezeSequence.Append(_freezeScreen.DOFade(0, fadeOutDuration));
-
-            // Deactivate after fade out
             freezeSequence.OnComplete(() => _freezeScreen.gameObject.SetActive(false));
+        }
 
-            // Start the sequence
-            freezeSequence.Play();
+        /// <summary>
+        /// Sets the visibility of a CanvasGroup element by adjusting its alpha.
+        /// </summary>
+        private void SetCanvasGroupVisibility(CanvasGroup canvasGroup, bool isVisible)
+        {
+            canvasGroup.alpha = isVisible ? 1 : 0;
+            canvasGroup.gameObject.SetActive(isVisible);
+        }
+
+        /// <summary>
+        /// Sets the visibility of a UI element (like Text) by enabling or disabling the GameObject.
+        /// </summary>
+        private void SetUIElementVisibility(MonoBehaviour uiElement, bool isVisible)
+        {
+            uiElement.gameObject.SetActive(isVisible);
         }
     }
 }
