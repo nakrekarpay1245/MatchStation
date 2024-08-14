@@ -198,6 +198,8 @@ public class LeafButton : MonoBehaviour
 
         if (_useHighlightEffect) Highlight(true);
 
+        Debug.LogWarning("Pressed: " + name);
+
         OnPressed?.Invoke();
     }
 
