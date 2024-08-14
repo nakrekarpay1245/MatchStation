@@ -89,6 +89,20 @@ namespace _Game.Scripts.Items
         [SerializeField]
         private Vector3 _itemPositionOffset = Vector3.up;
 
+        [Header("Scale Parameters")]
+        [Tooltip("")]
+        [SerializeField]
+        private float _itemNormalScaleMultiplier = 1f;
+        [Tooltip("")]
+        [SerializeField]
+        private float _itemSelectedMultiplier = 1.25f;
+        [Tooltip("")]
+        [SerializeField]
+        private float _itemCollectedScaleMultiplier = 0.5f;
+        [Tooltip("")]
+        [SerializeField]
+        private float _itemScaleChangeDuration = 0.2f;
+
         private bool _isCollectable = true;
         public bool IsCollectable { get => _isCollectable; private set => _isCollectable = value; }
 
@@ -114,7 +128,7 @@ namespace _Game.Scripts.Items
         {
             //Debug.Log(name + "Selected!");
             // Apply a scale effect using DOTween
-            transform.DOScale(Vector3.one * 1.2f, 0.2f); // Scale up 
+            transform.DOScale(Vector3.one * _itemSelectedMultiplier, _itemScaleChangeDuration); // Scale up 
 
             GetComponent<Renderer>().material.SetFloat("_OutlineWidth", 1f);
         }
@@ -123,7 +137,7 @@ namespace _Game.Scripts.Items
         {
             //Debug.Log(name + "DeSelected!");
             // Apply a scale effect using DOTween
-            transform.DOScale(Vector3.one, 0.2f); // Scale back to original
+            transform.DOScale(Vector3.one * _itemNormalScaleMultiplier, _itemScaleChangeDuration); // Scale back to original
 
             GetComponent<Renderer>().material.SetFloat("_OutlineWidth", 0f);
         }
@@ -135,7 +149,7 @@ namespace _Game.Scripts.Items
             //Debug.Log(name + "Collected!");
             // Apply a scale effect using DOTween
             // Scale back to original
-            transform.DOScale(Vector3.one, 0.2f).OnComplete(() =>
+            transform.DOScale(Vector3.one * _itemCollectedScaleMultiplier, _itemScaleChangeDuration).OnComplete(() =>
             {
                 _rigidbody.isKinematic = true;
             });
@@ -150,7 +164,7 @@ namespace _Game.Scripts.Items
             //Debug.Log(name + " Recycled!");
             // Apply a scale effect using DOTween
             // Scale back to original
-            transform.DOScale(Vector3.one, 0.2f).OnComplete(() =>
+            transform.DOScale(Vector3.one * _itemNormalScaleMultiplier, 0.2f).OnComplete(() =>
             {
                 _rigidbody.isKinematic = false;
             });
