@@ -18,7 +18,7 @@ namespace _Game.Scripts.Management
     {
         [Header("Level Configuration")]
         [SerializeField, Tooltip("Configuration data for the level, including items.")]
-        private LevelConfig _levelConfig;
+        private GameData _gameData;
 
         [Header("Item Lists")]
         [SerializeField, HideInInspector]
@@ -66,9 +66,9 @@ namespace _Game.Scripts.Management
         /// </summary>
         private IEnumerator SpawnItemsRoutine()
         {
-            var itemCreationTracker = _levelConfig.ItemDataList.ToDictionary(itemData => itemData, itemData => 0);
+            var itemCreationTracker = _gameData.CurrentLevel.ItemDataList.ToDictionary(itemData => itemData, itemData => 0);
 
-            int totalItemsToCreate = _levelConfig.ItemDataList.Sum(itemData => GetValidatedItemCount(itemData.ItemCount));
+            int totalItemsToCreate = _gameData.CurrentLevel.ItemDataList.Sum(itemData => GetValidatedItemCount(itemData.ItemCount));
 
             for (int i = 0; i < totalItemsToCreate; i++)
             {
@@ -103,7 +103,7 @@ namespace _Game.Scripts.Management
             LevelConfig.ItemData randomItemData;
             do
             {
-                randomItemData = _levelConfig.ItemDataList[Random.Range(0, _levelConfig.ItemDataList.Count)];
+                randomItemData = _gameData.CurrentLevel.ItemDataList[Random.Range(0, _gameData.CurrentLevel.ItemDataList.Count)];
             } while (itemCreationTracker[randomItemData] >= GetValidatedItemCount(randomItemData.ItemCount));
 
             return randomItemData;
@@ -138,7 +138,7 @@ namespace _Game.Scripts.Management
         private void CategorizeItems()
         {
             _activeRequiredItems = _activeItems
-                .Where(item => _levelConfig.ItemDataList.Any(data => data.ItemPrefab.ItemId == item.ItemId && data.IsRequired))
+                .Where(item => _gameData.CurrentLevel.ItemDataList.Any(data => data.ItemPrefab.ItemId == item.ItemId && data.IsRequired))
                 .ToList();
 
             _activeNormalItems = _activeItems
@@ -213,7 +213,7 @@ namespace _Game.Scripts.Management
             _collectedItems.Remove(recycledItem);
             _activeItems.Add(recycledItem);
 
-            if (_levelConfig.ItemDataList.Any(data => data.ItemPrefab.ItemId == recycledItem.ItemId &&
+            if (_gameData.CurrentLevel.ItemDataList.Any(data => data.ItemPrefab.ItemId == recycledItem.ItemId &&
                 data.IsRequired))
             {
                 _activeRequiredItems.Add(recycledItem);

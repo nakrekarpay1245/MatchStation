@@ -2,12 +2,22 @@ using TMPro;
 using UnityEngine;
 using DG.Tweening;
 using _Game.Scripts._helpers;
+using _Game.Scripts.Data;
 
 namespace _Game.Scripts.Management
 {
     public class UIManager : MonoBehaviour
     {
+        [Header("Game Data")]
+        [SerializeField, Tooltip("")]
+        private GameData _gameData;
+
         [Header("UI Elements")]
+        [Header("Displayers")]
+        [SerializeField, Tooltip("")]
+        private TextMeshProUGUI _levelText;
+
+        [Header("Buttons")]
         [SerializeField, Tooltip("Pause menu UI element")]
         private CanvasGroup _pauseMenu;
         [SerializeField, Tooltip("Resume button UI element")]
@@ -20,10 +30,14 @@ namespace _Game.Scripts.Management
         private LeafButton _nextButton;
         [SerializeField, Tooltip("Pause button UI element")]
         private LeafButton _pauseButton;
+
+        [Header("Results")]
         [SerializeField, Tooltip("Level complete text UI element")]
         private TextMeshProUGUI _levelCompleteText;
         [SerializeField, Tooltip("Level fail text UI element")]
         private TextMeshProUGUI _levelFailText;
+
+        [Header("PauseMenu")]
         [SerializeField, Tooltip("Game pause text UI element")]
         private TextMeshProUGUI _gamePausedText;
 
@@ -50,6 +64,9 @@ namespace _Game.Scripts.Management
         {
             // Initialize buttons with corresponding functions
             InitializeButtons();
+
+            // Initialize displayers
+            InitializeDisplayers();
 
             // Hide pause menu and end level texts at the start
             SetCanvasGroupVisibility(_pauseMenu, false);
@@ -81,6 +98,11 @@ namespace _Game.Scripts.Management
             AddButtonListener(_menuButton, NavigateToMenu);
             AddButtonListener(_nextButton, StartNextLevel);
             AddButtonListener(_pauseButton, Pause);
+        }
+
+        private void InitializeDisplayers()
+        {
+            _levelText.text = "LEVEL " + (_gameData.CurrentLevelIndex + 1);
         }
 
         /// <summary>

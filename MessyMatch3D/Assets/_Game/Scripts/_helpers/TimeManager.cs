@@ -10,7 +10,7 @@ namespace _Game.Scripts._helpers
         [Header("TimeManager Parameters")]
         [Header("Level Configuration")]
         [Tooltip("Reference to the level configuration.")]
-        [SerializeField] private LevelConfig _levelConfig;
+        [SerializeField] private GameData _gameData;
 
         private float _currentLevelTime;
         private bool _isTimerRunning;
@@ -20,7 +20,7 @@ namespace _Game.Scripts._helpers
 
         private void Start()
         {
-            StartTimer(_levelConfig.InitialTime);
+            StartTimer(_gameData.CurrentLevel.InitialTime);
         }
 
         /// <summary>
@@ -32,9 +32,9 @@ namespace _Game.Scripts._helpers
             _currentLevelTime = timeInSeconds;
             _isTimerRunning = true;
 
-            OnTimerUpdated?.Invoke(_currentLevelTime, _levelConfig.CriticalTimeThreshold);
+            OnTimerUpdated?.Invoke(_currentLevelTime, _gameData.CurrentLevel.CriticalTimeThreshold);
 
-            InvokeRepeating(nameof(UpdateTimer), _levelConfig.UpdateInterval, _levelConfig.UpdateInterval);
+            InvokeRepeating(nameof(UpdateTimer), _gameData.CurrentLevel.UpdateInterval, _gameData.CurrentLevel.UpdateInterval);
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace _Game.Scripts._helpers
         {
             if (!_isTimerRunning) return;
 
-            _currentLevelTime -= _levelConfig.UpdateInterval;
+            _currentLevelTime -= _gameData.CurrentLevel.UpdateInterval;
             if (_currentLevelTime <= 0)
             {
                 _currentLevelTime = 0;
@@ -53,7 +53,7 @@ namespace _Game.Scripts._helpers
                 OnTimeFinished?.Invoke();
             }
 
-            OnTimerUpdated?.Invoke(_currentLevelTime, _levelConfig.CriticalTimeThreshold);
+            OnTimerUpdated?.Invoke(_currentLevelTime, _gameData.CurrentLevel.CriticalTimeThreshold);
         }
 
         /// <summary>
@@ -66,10 +66,10 @@ namespace _Game.Scripts._helpers
             if (!_isTimerRunning)
             {
                 _isTimerRunning = true;
-                InvokeRepeating(nameof(UpdateTimer), _levelConfig.UpdateInterval, _levelConfig.UpdateInterval);
+                InvokeRepeating(nameof(UpdateTimer), _gameData.CurrentLevel.UpdateInterval, _gameData.CurrentLevel.UpdateInterval);
             }
 
-            OnTimerUpdated?.Invoke(_currentLevelTime, _levelConfig.CriticalTimeThreshold);
+            OnTimerUpdated?.Invoke(_currentLevelTime, _gameData.CurrentLevel.CriticalTimeThreshold);
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace _Game.Scripts._helpers
         public void ResetTimer()
         {
             StopTimer();
-            StartTimer(_levelConfig.InitialTime);
+            StartTimer(_gameData.CurrentLevel.InitialTime);
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace _Game.Scripts._helpers
                     if (_currentLevelTime > 0)
                     {
                         _isTimerRunning = true;
-                        InvokeRepeating(nameof(UpdateTimer), _levelConfig.UpdateInterval, _levelConfig.UpdateInterval);
+                        InvokeRepeating(nameof(UpdateTimer), _gameData.CurrentLevel.UpdateInterval, _gameData.CurrentLevel.UpdateInterval);
                     }
                 });
             }

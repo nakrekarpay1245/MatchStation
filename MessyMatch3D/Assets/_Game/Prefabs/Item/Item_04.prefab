@@ -149,5 +149,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _itemId: 4
-  _itemIcon: {fileID: 10917, guid: 0000000000000000f000000000000000, type: 0}
+  _itemIcon: {fileID: 21300000, guid: e44d0cdf54063364e99fc8839cc02c5d, type: 3}
   _itemDescription: Cylinder Item
+  _itemTile: {fileID: 0}
+  _itemMoveDuration: 0.5
+  _itemPositionOffset: {x: 0, y: 1, z: 0}
+  _itemNormalScaleMultiplier: 1
+  _itemSelectedMultiplier: 1.25
+  _itemCollectedScaleMultiplier: 0.5
+  _itemScaleChangeDuration: 0.2
+  _itemCollectParticleKey: ItemCollect
+  _itemCollectClipKey: ItemCollect

@@ -17,7 +17,7 @@ namespace _Game.Scripts.Management
         [Header("LevelManager Parameters")]
         [Header("Level Configuration")]
         [Tooltip("Reference to the level configuration.")]
-        [SerializeField] private LevelConfig _levelConfig;
+        [SerializeField] private GameData _gameData;
 
         [Header("Indicator Settings")]
         [Tooltip("Parent object for the item indicators.")]
@@ -63,7 +63,7 @@ namespace _Game.Scripts.Management
             _itemIndicators.Clear();
             _requiredItemCounts.Clear();
 
-            foreach (var itemData in _levelConfig.ItemDataList)
+            foreach (var itemData in _gameData.CurrentLevel.ItemDataList)
             {
                 if (itemData.IsRequired)
                 {
@@ -99,6 +99,7 @@ namespace _Game.Scripts.Management
                 GlobalBinder.singleton.AudioManager.PlaySound(_levelCompleteClipKey);
             }
 
+            IncreaseLevelIndex();
             Debug.Log("Level Completed!");
         }
 
@@ -117,7 +118,9 @@ namespace _Game.Scripts.Management
         /// </summary>
         public void IncreaseLevelIndex()
         {
+            _currentLevelIndex = _gameData.CurrentLevelIndex;
             _currentLevelIndex++;
+            _gameData.CurrentLevelIndex = _currentLevelIndex;
             Debug.Log($"Increased Level Index to {_currentLevelIndex}");
         }
 

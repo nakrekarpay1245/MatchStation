@@ -917,11 +917,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 0
+    m_Left: 50
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 4
+  m_ChildAlignment: 3
   m_Spacing: 50
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
@@ -1773,7 +1773,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0a6b3d4c8f93534aa315dc1bb04c31f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _levelConfig: {fileID: 11400000, guid: 93bcb47e3fa51504e9b53893ddd48bdd, type: 2}
+  _gameData: {fileID: 11400000, guid: 3e03748dc48e3f641a1b3223ae838143, type: 2}
   _indicatorsParent: {fileID: 301109651}
   _indicatorPrefab: {fileID: 6255623286210125375, guid: ac02d2be35a279d48be4287acbdf7028,
     type: 3}
@@ -2308,7 +2308,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90ff9380f16b93f429685764077ff08b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _levelConfig: {fileID: 11400000, guid: 93bcb47e3fa51504e9b53893ddd48bdd, type: 2}
+  _gameData: {fileID: 11400000, guid: 3e03748dc48e3f641a1b3223ae838143, type: 2}
 --- !u!4 &755733575
 Transform:
   m_ObjectHideFlags: 0
@@ -2415,7 +2415,7 @@ MonoBehaviour:
     Volume: 1
     Pitch: 1
     Loop: 0
-  _maximumAudioCount: 10
+  _maximumAudioCount: 20
   _masterVolume: 1
   _isAudioSourceMuted: 0
   _soundMixerGroup: {fileID: 0}
@@ -5217,7 +5217,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c508cef0b3d3ed34fafeabaa5a960896, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _levelConfig: {fileID: 11400000, guid: 93bcb47e3fa51504e9b53893ddd48bdd, type: 2}
+  _gameData: {fileID: 11400000, guid: 3e03748dc48e3f641a1b3223ae838143, type: 2}
   _generatedItems: []
   _activeItems: []
   _activeRequiredItems: []
@@ -5870,6 +5870,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13005b7a4615c484bb180fb41889c257, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _gameData: {fileID: 11400000, guid: 3e03748dc48e3f641a1b3223ae838143, type: 2}
+  _levelText: {fileID: 1752775302}
   _pauseMenu: {fileID: 1538864994}
   _resumeButton: {fileID: 137995858}
   _restartButton: {fileID: 315429244}
