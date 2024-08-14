@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6fe52636ef11854d9343784a29f48bb, type: 3}
+  m_Name: Level 2
+  m_EditorClassIdentifier: 
+  InitialTime: 30
+  UpdateInterval: 1
+  CriticalTimeThreshold: 10
+  ItemDataList:
+  - ItemPrefab: {fileID: 8055578427656120061, guid: 7f8c06c34c21f9b4ebb5a0cd3f788aa5,
+      type: 3}
+    ItemCount: 6
+    IsRequired: 1
+  - ItemPrefab: {fileID: 7958291244664735551, guid: 78d42078f8f54bb468357045db3b0198,
+      type: 3}
+    ItemCount: 6
+    IsRequired: 1
