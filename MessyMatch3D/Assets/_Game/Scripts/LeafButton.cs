@@ -19,35 +19,48 @@ public class LeafButton : MonoBehaviour
     [SerializeField] private bool _useHighlightEffect = true;
     public bool UseHighlightEffect => _useHighlightEffect;
 
-    [Header("Text Effect")]
-    [Tooltip("Toggle to determine if effects should be applied to the Text component.")]
-    [SerializeField] private bool _useTextEffect = false;
-    public bool UseTextEffect => _useTextEffect;
-
-    [Header("Color Effect")]
+    [Header("Button Color Effect")]
     [Tooltip("Toggle to determine if color effects should be applied.")]
-    [SerializeField] private bool _useColorEffect = true;
-    public bool UseColorEffect => _useColorEffect;
+    [SerializeField] private bool _useButtonColorEffect = true;
+    public bool UseButtonColorEffect => _useButtonColorEffect;
+
+    [Header("Text Color Effect")]
+    [Tooltip("Toggle to determine if color effects should be applied.")]
+    [SerializeField] private bool _useTextColorEffect = true;
+    public bool UseTextColorEffect => _useTextColorEffect;
 
     [Header("Sound Effect")]
     [Tooltip("Toggle to determine whether to use sound effects.")]
     [SerializeField] private bool _useSoundEffect = true;
     public bool UseSoundEffect => _useSoundEffect;
 
-    [Header("Colors")]
+    [Header("Button Colors")]
     [Tooltip("Color when the mouse is not interacting with the button.")]
-    [SerializeField, HideInInspector] private Color _normalColor = new Color(232f, 232f, 232f);
+    [SerializeField, HideInInspector] private Color _buttonNormalColor = new Color(232f, 232f, 232f);
 
     [Tooltip("Color when the mouse is over the button.")]
-    [SerializeField, HideInInspector] private Color _hoverColor = new Color(190f, 190f, 179f);
+    [SerializeField, HideInInspector] private Color _buttonHoverColor = new Color(190f, 190f, 179f);
 
     [Tooltip("Color when the button is pressed.")]
-    [SerializeField, HideInInspector] private Color _pressedColor = new Color(175f, 175f, 175f);
+    [SerializeField, HideInInspector] private Color _buttonPressedColor = new Color(175f, 175f, 175f);
+
+    [Header("Text Colors")]
+    [Tooltip("Text color when the mouse is not interacting with the button.")]
+    [SerializeField, HideInInspector] private Color _textNormalColor = new Color(232f, 232f, 232f);
+
+    [Tooltip("Text color when the mouse is over the button.")]
+    [SerializeField, HideInInspector] private Color _textHoverColor = new Color(190f, 190f, 179f);
+
+    [Tooltip("Text color when the button is pressed.")]
+    [SerializeField, HideInInspector] private Color _textPressedColor = new Color(175f, 175f, 175f);
 
     [Header("Highlight")]
     [Tooltip("Image component to show when the button is selected. Active only if Image effect is enabled.")]
     [SerializeField, HideInInspector] private Image _highlightImage;
-
+    [SerializeField, HideInInspector] private float _hightlightImageVisibleAlpha;
+    [SerializeField, HideInInspector] private float _hightlightImageHiddenAlpha;
+    [SerializeField, HideInInspector] private float _hightlightImageVisibleScale;
+    [SerializeField, HideInInspector] private float _hightlightImageHiddenScale;
     [Header("Sound Params")]
     [Tooltip("Key for the sound to play when the button is pressed.")]
     [SerializeField, HideInInspector] private string _buttonPressClipKey = "ButtonPressClip";
@@ -78,14 +91,19 @@ public class LeafButton : MonoBehaviour
         {
             _buttonImage = GetComponent<Image>();
             if (_buttonImage)
-                _buttonImage.color = _normalColor;
+                _buttonImage.color = _buttonNormalColor;
         }
 
-        if (_useTextEffect)
+        if (_useTextColorEffect)
         {
-            _buttonText = GetComponent<TextMeshProUGUI>();
+            _buttonText = GetComponentInChildren<TextMeshProUGUI>();
             if (_buttonText)
-                _buttonText.color = _normalColor;
+                _buttonText.color = _textNormalColor;
+        }
+
+        if (_useHighlightEffect && _highlightImage)
+        {
+            Highlight(false);
         }
 
         EventTrigger eventTrigger = GetComponent<EventTrigger>();
@@ -98,12 +116,6 @@ public class LeafButton : MonoBehaviour
         AddEventTrigger(eventTrigger, EventTriggerType.PointerExit, OnPointerExit);
         AddEventTrigger(eventTrigger, EventTriggerType.PointerDown, OnPointerDown);
         AddEventTrigger(eventTrigger, EventTriggerType.PointerUp, OnPointerUp);
-
-        if (_useHighlightEffect && _highlightImage)
-        {
-            _highlightImage.DOFade(0, 0f);
-            _highlightImage.transform.DOScale(0, 0f);
-        }
     }
 
     /// <summary>
@@ -126,12 +138,16 @@ public class LeafButton : MonoBehaviour
     /// <param name="eventData">Pointer event data.</param>
     private void OnPointerEnter(BaseEventData eventData)
     {
-        if (_useColorEffect)
+        if (_useButtonColorEffect)
         {
-            if (_useHighlightEffect && _buttonImage)
-                _buttonImage.DOColor(_hoverColor, _transitionDuration);
-            else if (_useTextEffect && _buttonText)
-                _buttonText.DOColor(_hoverColor, _transitionDuration);
+            if (_buttonImage)
+                _buttonImage.DOColor(_buttonHoverColor, _transitionDuration);
+        }
+
+        if (_useTextColorEffect)
+        {
+            if (_buttonText)
+                _buttonText.DOColor(_textHoverColor, _transitionDuration);
         }
 
         GlobalBinder.singleton.AudioManager.PlaySound(_buttonHoverClipKey);
@@ -145,12 +161,16 @@ public class LeafButton : MonoBehaviour
     /// <param name="eventData">Pointer event data.</param>
     private void OnPointerExit(BaseEventData eventData)
     {
-        if (_useColorEffect)
+        if (_useButtonColorEffect)
         {
-            if (_useHighlightEffect && _buttonImage)
-                _buttonImage.DOColor(_normalColor, _transitionDuration);
-            else if (_useTextEffect && _buttonText)
-                _buttonText.DOColor(_normalColor, _transitionDuration);
+            if (_buttonImage)
+                _buttonImage.DOColor(_buttonNormalColor, _transitionDuration);
+        }
+
+        if (_useTextColorEffect)
+        {
+            if (_buttonText)
+                _buttonText.DOColor(_textNormalColor, _transitionDuration);
         }
 
         if (_useHighlightEffect) Highlight(false);
@@ -162,15 +182,21 @@ public class LeafButton : MonoBehaviour
     /// <param name="eventData">Pointer event data.</param>
     private void OnPointerDown(BaseEventData eventData)
     {
-        if (_useColorEffect)
+        if (_useButtonColorEffect)
         {
-            if (_useHighlightEffect && _buttonImage)
-                _buttonImage.DOColor(_pressedColor, _transitionDuration);
-            else if (_useTextEffect && _buttonText)
-                _buttonText.DOColor(_pressedColor, _transitionDuration);
+            if (_buttonImage)
+                _buttonImage.DOColor(_buttonPressedColor, _transitionDuration);
+        }
+
+        if (_useTextColorEffect)
+        {
+            if (_buttonText)
+                _buttonText.DOColor(_textPressedColor, _transitionDuration);
         }
 
         GlobalBinder.singleton.AudioManager.PlaySound(_buttonPressClipKey);
+
+        if (_useHighlightEffect) Highlight(true);
 
         OnPressed?.Invoke();
     }
@@ -181,23 +207,41 @@ public class LeafButton : MonoBehaviour
     /// <param name="eventData">Pointer event data.</param>
     private void OnPointerUp(BaseEventData eventData)
     {
-        if (_useColorEffect)
+        if (_useButtonColorEffect)
         {
             if (eventData is PointerEventData pointerEventData && pointerEventData.hovered.Contains(gameObject))
             {
-                if (_useHighlightEffect && _buttonImage)
-                    _buttonImage.DOColor(_hoverColor, _transitionDuration);
-                else if (_useTextEffect && _buttonText)
-                    _buttonText.DOColor(_hoverColor, _transitionDuration);
+                if (_useButtonColorEffect && _buttonImage)
+                    _buttonImage.DOColor(_buttonPressedColor, _transitionDuration);
+
+                if (_useTextColorEffect && _buttonText)
+                    _buttonText.DOColor(_textPressedColor, _transitionDuration);
             }
             else
             {
-                if (_useHighlightEffect && _buttonImage)
-                    _buttonImage.DOColor(_normalColor, _transitionDuration);
-                else if (_useTextEffect && _buttonText)
-                    _buttonText.DOColor(_normalColor, _transitionDuration);
+                if (_useButtonColorEffect && _buttonImage)
+                    _buttonImage.DOColor(_buttonNormalColor, _transitionDuration);
+
+                if (_useTextColorEffect && _buttonText)
+                    _buttonText.DOColor(_textNormalColor, _transitionDuration);
             }
         }
+
+        if (_useHighlightEffect) Highlight(false);
+    }
+
+    public void DeactivateButton()
+    {
+        if (_useButtonColorEffect)
+        {
+            if (_useButtonColorEffect && _buttonImage)
+                _buttonImage.DOColor(_buttonNormalColor, _transitionDuration);
+
+            if (_useTextColorEffect && _buttonText)
+                _buttonText.DOColor(_textNormalColor, _transitionDuration);
+        }
+
+        if (_useHighlightEffect) Highlight(false);
     }
 
     /// <summary>
@@ -208,9 +252,10 @@ public class LeafButton : MonoBehaviour
     {
         if (_useHighlightEffect && _highlightImage)
         {
-            float alpha = highlight ? 1f : 0f;
-            _highlightImage.DOFade(alpha, _transitionDuration);
-            _highlightImage.transform.DOScale(highlight ? 1 : 0, _transitionDuration);
+            float alpha = highlight ? _hightlightImageVisibleAlpha : _hightlightImageHiddenAlpha;
+            float scale = highlight ? _hightlightImageVisibleScale : _hightlightImageHiddenScale;
+            _highlightImage.GetComponent<CanvasGroup>().DOFade(alpha, _transitionDuration);
+            _highlightImage.transform.DOScale(scale, _transitionDuration);
         }
     }
 }
