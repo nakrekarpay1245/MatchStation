@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6592909396473015249}
   - component: {fileID: 9173329317716464592}
   m_Layer: 5
-  m_Name: HighlightImage
+  m_Name: ButtonIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -155,8 +155,9 @@ MonoBehaviour:
       m_Calls: []
   m_text: SHOP
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: b2a815cd8dcf1b547b4a6e6fae344fcf, type: 2}
+  m_sharedMaterial: {fileID: 3337770624806102395, guid: b2a815cd8dcf1b547b4a6e6fae344fcf,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -180,7 +181,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 44.75
+  m_fontSize: 50
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -329,6 +330,19 @@ MonoBehaviour:
   _activeColor: {r: 0, g: 0, b: 0, a: 1}
   _inactiveColor: {r: 0.21960786, g: 0.21960786, b: 0.21960786, a: 1}
   _transitionDuration: 0.5
+  _scalePositionDuration: 0.5
+  _buttonIcon: {fileID: 6592909396473015249}
+  _activeScale: {x: 1.25, y: 1.25, z: 1.25}
+  _inactiveScale: {x: 0.75, y: 0.75, z: 0.75}
+  _activePositionOffset: {x: 0, y: 75, z: 0}
+  _inactivePositionOffset: {x: 0, y: 25, z: 0}
+  _activeAlpha: 1
+  _inactiveAlpha: 0.5
+  _buttonText: {fileID: 2385527756789784492}
+  _activeTextColor: {r: 1, g: 1, b: 1, a: 1}
+  _inactiveTextColor: {r: 0.21960786, g: 0.21960786, b: 0.21960786, a: 1}
+  _activeSize: {x: 300, y: 200}
+  _inactiveSize: {x: 175, y: 200}
   _onPressed:
     m_PersistentCalls:
       m_Calls: []
