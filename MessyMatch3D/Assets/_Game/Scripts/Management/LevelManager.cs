@@ -1,32 +1,45 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
-using _Game.Scripts.Items;
 using UnityEngine.Events;
+using _Game.Scripts.Items;
 using _Game.Scripts.Data;
-using _Game.Scripts._helpers; // DOTween kütüphanesi için
+using _Game.Scripts._helpers; // For DOTween functionality
 
 namespace _Game.Scripts.Management
 {
     /// <summary>
-    /// Manages the level and UI elements using DOTween for smooth animations.
-    /// Manages the level progress, including item collection requirements and UI indicators.
+    /// Manages level progression, UI elements, and animations using DOTween for smooth transitions.
+    /// Handles level completion, failure, item collection updates, and scene management.
     /// </summary>
     public class LevelManager : MonoBehaviour
     {
-        [Header("LevelManager Parameters")]
         [Header("Level Configuration")]
-        [Tooltip("Reference to the level configuration.")]
+        [Tooltip("Reference to the game data which contains level configurations.")]
         [SerializeField] private GameData _gameData;
 
         [Header("Indicator Settings")]
-        [Tooltip("Parent object for the item indicators.")]
-        [SerializeField]
-        private Transform _indicatorsParent;
+        [Tooltip("Parent transform for item indicators.")]
+        [SerializeField] private Transform _indicatorsParent;
 
-        [Tooltip("Prefab for the item indicator.")]
-        [SerializeField]
-        private ItemIndicator _indicatorPrefab;
+        [Tooltip("Prefab for item indicators.")]
+        [SerializeField] private ItemIndicator _indicatorPrefab;
+
+        [Header("Effects")]
+        [Tooltip("Positions where fireworks particle effects will be played.")]
+        [SerializeField] private List<Vector3> _fireworksParticlePositions;
+
+        [Tooltip("Key for the fireworks particle effect.")]
+        [SerializeField] private string _fireworksParticleKey = "Fireworks";
+
+        [Tooltip("Audio clip key for the fireworks sound.")]
+        [SerializeField] private string _fireworksClipKey = "Fireworks";
+
+        [Tooltip("Audio clip key for level completion sound.")]
+        [SerializeField] private string _levelCompleteClipKey = "LevelComplete";
+
+        [Tooltip("Audio clip key for level failure sound.")]
+        [SerializeField] private string _levelFailClipKey = "LevelFail";
 
         private Dictionary<int, ItemIndicator> _itemIndicators = new Dictionary<int, ItemIndicator>();
         private Dictionary<int, int> _requiredItemCounts = new Dictionary<int, int>();
@@ -36,30 +49,18 @@ namespace _Game.Scripts.Management
         public UnityAction OnLevelFailed;
         public UnityAction OnLevelCompleted;
 
-        [Header("Effects")]
-        [Header("Particle Effects")]
-        [SerializeField, Tooltip("")]
-        private List<Vector3> _fireworksParticlePositions;
-        [SerializeField, Tooltip("")]
-        private string _fireworksParticleKey = "Fireworks";
-        [Header("Audio Effects")]
-        [SerializeField, Tooltip("")]
-        private string _fireworksClipKey = "Fireworks";
-        [SerializeField, Tooltip("")]
-        private string _levelCompleteClipKey = "LevelComplete";
-        [SerializeField, Tooltip("")]
-        private string _levelFailClipKey = "LevelFail";
-
         private void Start()
         {
             CreateItemIndicators();
-
             GlobalBinder.singleton.TimeManager.OnTimeFinished += LevelFail;
         }
 
+        /// <summary>
+        /// Creates and initializes item indicators based on the current level's data.
+        /// </summary>
         private void CreateItemIndicators()
         {
-            // Clear existing item indicators and required item counts
+            // Clear existing indicators and required item counts
             _itemIndicators.Clear();
             _requiredItemCounts.Clear();
 
@@ -68,43 +69,32 @@ namespace _Game.Scripts.Management
                 if (itemData.IsRequired)
                 {
                     // Instantiate indicator prefab
-                    var currentIndicator = Instantiate(_indicatorPrefab, _indicatorsParent);
-                    var itemIndicator = currentIndicator;
+                    var itemIndicator = Instantiate(_indicatorPrefab, _indicatorsParent);
 
                     // Set up the indicator
                     itemIndicator.SetIcon(itemData.ItemPrefab.ItemIcon);
                     itemIndicator.SetQuantity(itemData.ItemCount);
 
-                    // Store the indicator by item ID
+                    // Store the indicator and required item count
                     _itemIndicators[itemData.ItemPrefab.ItemId] = itemIndicator;
-
-                    // Store the required item count
                     _requiredItemCounts[itemData.ItemPrefab.ItemId] = itemData.ItemCount;
                 }
             }
         }
 
         /// <summary>
-        /// Marks the level as complete and shows the completion UI.
+        /// Marks the level as complete, shows completion UI, and plays related effects.
         /// </summary>
         public void LevelComplete()
         {
             OnLevelCompleted?.Invoke();
-            for (int i = 0; i < _fireworksParticlePositions.Count; i++)
-            {
-                GlobalBinder.singleton.ParticleManager.PlayParticleAtPoint(_fireworksParticleKey,
-                   _fireworksParticlePositions[i]);
-
-                GlobalBinder.singleton.AudioManager.PlaySound(_fireworksClipKey);
-                GlobalBinder.singleton.AudioManager.PlaySound(_levelCompleteClipKey);
-            }
-
+            PlayEffects(_fireworksParticleKey, _fireworksClipKey, _levelCompleteClipKey);
             IncreaseLevelIndex();
             Debug.Log("Level Completed!");
         }
 
         /// <summary>
-        /// Marks the level as fail and shows the completion UI.
+        /// Marks the level as failed and plays failure effects.
         /// </summary>
         public void LevelFail()
         {
@@ -118,48 +108,44 @@ namespace _Game.Scripts.Management
         /// </summary>
         public void IncreaseLevelIndex()
         {
-            _currentLevelIndex = _gameData.CurrentLevelIndex;
-            _currentLevelIndex++;
+            _currentLevelIndex = _gameData.CurrentLevelIndex + 1;
             _gameData.CurrentLevelIndex = _currentLevelIndex;
             Debug.Log($"Increased Level Index to {_currentLevelIndex}");
         }
 
         /// <summary>
-        /// Restarts the current level.
+        /// Restarts the current level by reloading the active scene.
         /// </summary>
         public void Restart()
         {
             Time.timeScale = 1;
-            // Reload the current level
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             Debug.Log("Game Restarted");
         }
 
         /// <summary>
-        /// Starts the next level.
+        /// Loads the next level in the build settings.
         /// </summary>
         public void Next()
         {
             Time.timeScale = 1;
-            // Load the next level
             SceneManager.LoadScene((SceneManager.GetActiveScene().buildIndex + 1) %
                 SceneManager.sceneCountInBuildSettings);
             Debug.Log("Next Level");
         }
 
         /// <summary>
-        /// Navigates to the main menu.
+        /// Navigates to the main menu scene.
         /// </summary>
         public void Menu()
         {
             Time.timeScale = 1;
-            // Load the main menu scene
             SceneManager.LoadScene(0);
             Debug.Log("Navigated to Menu");
         }
 
         /// <summary>
-        /// Updates the item indicator when an item is collected.
+        /// Updates item indicators and required item counts when an item is collected.
         /// </summary>
         /// <param name="item">The collected item.</param>
         public void UpdateItemCollection(Item item)
@@ -168,23 +154,35 @@ namespace _Game.Scripts.Management
             {
                 itemIndicator.DecreaseQuantity();
 
-                // Reduce the count of the required item
                 if (_requiredItemCounts.ContainsKey(item.ItemId))
                 {
                     _requiredItemCounts[item.ItemId]--;
 
-                    // If the count reaches zero, remove the item from required items
                     if (_requiredItemCounts[item.ItemId] <= 0)
                     {
                         _requiredItemCounts.Remove(item.ItemId);
-
-                        // Check if all required items are collected
                         if (_requiredItemCounts.Count <= 0)
                         {
                             LevelComplete();
                         }
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Plays particle and audio effects for level completion and fireworks.
+        /// </summary>
+        /// <param name="particleKey">Key for the particle effect.</param>
+        /// <param name="fireworksClipKey">Key for the fireworks sound clip.</param>
+        /// <param name="levelCompleteClipKey">Key for the level complete sound clip.</param>
+        private void PlayEffects(string particleKey, string fireworksClipKey, string levelCompleteClipKey)
+        {
+            foreach (var position in _fireworksParticlePositions)
+            {
+                GlobalBinder.singleton.ParticleManager.PlayParticleAtPoint(particleKey, position);
+                GlobalBinder.singleton.AudioManager.PlaySound(fireworksClipKey);
+                GlobalBinder.singleton.AudioManager.PlaySound(levelCompleteClipKey);
             }
         }
     }
