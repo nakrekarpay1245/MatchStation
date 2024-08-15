@@ -49,6 +49,8 @@ namespace _Game.Scripts.Management
         private Vector2 _horizontalSpawnRange = new Vector2(-5f, 5f);
         [SerializeField, Tooltip("Minimum and maximum spawn positions on the vertical axis.")]
         private Vector2 _verticalSpawnRange = new Vector2(-5f, 5f);
+        [SerializeField, Tooltip("Minimum and maximum spawn positions on the vertical axis.")]
+        private Vector2 _upwardSpawnRange = new Vector2(5f, 10f);
         [SerializeField, Tooltip("Height at which items are spawned.")]
         private float _spawnHeight = 1f;
 
@@ -126,6 +128,8 @@ namespace _Game.Scripts.Management
         /// <param name="itemNumber">Item's number in the current set.</param>
         private void CreateItem(LevelConfig.ItemData itemData, int itemNumber)
         {
+            _spawnHeight = Random.Range(_upwardSpawnRange.x, _upwardSpawnRange.y);
+
             Vector3 spawnPosition = new Vector3(
                 Random.Range(_horizontalSpawnRange.x, _horizontalSpawnRange.y),
                 _spawnHeight,
@@ -306,7 +310,7 @@ namespace _Game.Scripts.Management
             );
             Vector3 size = new Vector3(
                 Mathf.Abs(_horizontalSpawnRange.y - _horizontalSpawnRange.x),
-                0.1f,
+                 Mathf.Abs(_upwardSpawnRange.y - _upwardSpawnRange.x),
                 Mathf.Abs(_verticalSpawnRange.y - _verticalSpawnRange.x)
             );
             Gizmos.DrawWireCube(center, size);
