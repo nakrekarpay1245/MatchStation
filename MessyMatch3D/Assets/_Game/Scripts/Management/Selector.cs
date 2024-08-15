@@ -5,34 +5,34 @@ using UnityEngine;
 namespace _Game.Scripts.Management
 {
     /// <summary>
-    /// Handles the selection and interaction with items in the game.
-    /// Utilizes PlayerInput to manage user interactions with selectable and collectable objects.
+    /// Manages item selection and interaction based on player input.
+    /// Utilizes raycasting to select and collect items.
     /// </summary>
     public class Selector : MonoBehaviour, ISelector, ICollector
     {
-        [Header("Camera Parameters")]
-        [SerializeField, Tooltip("The camera used for item selection.")]
+        [Header("Camera Settings")]
+        [SerializeField, Tooltip("Camera used for item selection.")]
         private Camera _selectionCamera;
 
-        [Header("Raycast Parameters")]
-        [SerializeField, Tooltip("The layer mask used for raycasting.")]
+        [Header("Raycast Settings")]
+        [SerializeField, Tooltip("Layer mask for raycasting to filter raycast targets.")]
         private LayerMask _raycastLayerMask = ~0; // Default to all layers
 
-        [SerializeField, Tooltip("The length of the raycast.")]
+        [SerializeField, Tooltip("Maximum distance for the raycast.")]
         private float _raycastLength = 100f;
 
         [Header("Raycast Gizmo Colors")]
-        [SerializeField, Tooltip("The color of the raycast for mouse down.")]
+        [SerializeField, Tooltip("Color of the raycast when the mouse button is pressed down.")]
         private Color _mouseDownGizmoColor = Color.green;
 
-        [SerializeField, Tooltip("The color of the raycast for mouse held.")]
+        [SerializeField, Tooltip("Color of the raycast when the mouse button is held.")]
         private Color _mouseHoldGizmoColor = Color.yellow;
 
-        [SerializeField, Tooltip("The color of the raycast for mouse up.")]
+        [SerializeField, Tooltip("Color of the raycast when the mouse button is released.")]
         private Color _mouseUpGizmoColor = Color.red;
 
         [Header("Dependencies")]
-        [SerializeField, Tooltip("The PlayerInput scriptable object that stores input data.")]
+        [SerializeField, Tooltip("Scriptable object storing player input data.")]
         private PlayerInput _playerInput;
 
         private ISelectable _currentSelectable;
@@ -48,7 +48,7 @@ namespace _Game.Scripts.Management
         }
 
         /// <summary>
-        /// Subscribes to input events from the PlayerInput scriptable object.
+        /// Subscribes to input events for item selection and interaction.
         /// </summary>
         private void SubscribeToInputEvents()
         {
@@ -58,7 +58,7 @@ namespace _Game.Scripts.Management
         }
 
         /// <summary>
-        /// Unsubscribes from input events from the PlayerInput scriptable object.
+        /// Unsubscribes from input events to prevent memory leaks.
         /// </summary>
         private void UnsubscribeFromInputEvents()
         {
@@ -69,7 +69,7 @@ namespace _Game.Scripts.Management
 
         /// <summary>
         /// Handles the logic when the mouse button is pressed down.
-        /// Selects the item under the mouse cursor.
+        /// Selects the item under the cursor if it is selectable.
         /// </summary>
         private void HandleMouseButtonDown()
         {
@@ -85,8 +85,8 @@ namespace _Game.Scripts.Management
         }
 
         /// <summary>
-        /// Handles the logic when the mouse button is held.
-        /// Continuously selects the item under the mouse cursor and deselects the previous one.
+        /// Handles the logic when the mouse button is held down.
+        /// Continuously selects the item under the cursor and deselects the previous one.
         /// </summary>
         private void HandleMouseHeld()
         {
@@ -104,7 +104,7 @@ namespace _Game.Scripts.Management
 
         /// <summary>
         /// Handles the logic when the mouse button is released.
-        /// Deselects the current item and attempts to collect an item under the mouse cursor.
+        /// Deselects the current item and attempts to collect the item under the cursor if it is collectable.
         /// </summary>
         private void HandleMouseButtonUp()
         {
@@ -119,16 +119,15 @@ namespace _Game.Scripts.Management
                 var collectable = hit.collider.GetComponent<ICollectable>();
                 if (collectable != null)
                 {
-
                     Collect(collectable);
                 }
             });
         }
 
         /// <summary>
-        /// Performs a raycast and executes the given action if an object is hit.
+        /// Performs a raycast from the camera and executes the given action if an object is hit.
         /// </summary>
-        /// <param name="onHit">Action to perform on a raycast hit.</param>
+        /// <param name="onHit">Action to execute if the raycast hits an object.</param>
         private void PerformRaycastAction(System.Action<RaycastHit> onHit)
         {
             if (_selectionCamera == null) return;
@@ -141,7 +140,7 @@ namespace _Game.Scripts.Management
         }
 
         /// <summary>
-        /// Selects the given selectable object.
+        /// Selects the specified selectable object.
         /// </summary>
         /// <param name="selectable">The object to select.</param>
         public void Select(ISelectable selectable)
@@ -150,7 +149,7 @@ namespace _Game.Scripts.Management
         }
 
         /// <summary>
-        /// Deselects the given selectable object.
+        /// Deselects the specified selectable object.
         /// </summary>
         /// <param name="selectable">The object to deselect.</param>
         public void DeSelect(ISelectable selectable)
@@ -159,7 +158,7 @@ namespace _Game.Scripts.Management
         }
 
         /// <summary>
-        /// Collects the given collectable object.
+        /// Collects the specified collectable object.
         /// </summary>
         /// <param name="collectable">The object to collect.</param>
         public void Collect(ICollectable collectable)
