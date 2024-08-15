@@ -1,33 +1,49 @@
-namespace _Game.Scripts._helpers
+using _Game.Scripts._helpers;
+using UnityEngine;
+
+namespace _Game.Scripts.Helpers
 {
-    public class GameStateManager
+    /// <summary>
+    /// Manages the current state of the game and notifies listeners when the game state changes.
+    /// Follows the Singleton design pattern to ensure only one instance exists.
+    /// </summary>
+    public class GameStateManager : MonoSingleton<GameStateManager>
     {
-        private static GameStateManager singleton;
+        /// <summary>
+        /// Event triggered whenever the game state changes.
+        /// </summary>
+        public event System.Action<GameState> OnGameStateChanged;
 
-        public delegate void GameStateChangeHandler(GameState newGameState);
-        public event GameStateChangeHandler OnGameStateChanged;
+        /// <summary>
+        /// Gets the current game state.
+        /// </summary>
+        public GameState CurrentGameState { get; private set; } = GameState.Gameplay; // Default state is Gameplay
 
-        public GameState CurrentGameState { get; private set; }
-
+        /// <summary>
+        /// Private constructor to prevent external instantiation (Singleton Pattern).
+        /// </summary>
         private GameStateManager() { }
 
-        public static GameStateManager Singleton
-        {
-            get
-            {
-                if (singleton == null)
-                {
-                    singleton = new GameStateManager();
-                }
-                return singleton;
-            }
-        }
-
+        /// <summary>
+        /// Sets the new game state and invokes the OnGameStateChanged event if the state changes.
+        /// </summary>
+        /// <param name="newGameState">The new game state to be set.</param>
         public void SetState(GameState newGameState)
         {
-            if (newGameState == CurrentGameState) return;
+            if (newGameState == CurrentGameState)
+                return;
+
             CurrentGameState = newGameState;
             OnGameStateChanged?.Invoke(newGameState);
         }
+    }
+
+    /// <summary>
+    /// Enum representing the possible states of the game.
+    /// </summary>
+    public enum GameState
+    {
+        Gameplay,
+        Pause
     }
 }
