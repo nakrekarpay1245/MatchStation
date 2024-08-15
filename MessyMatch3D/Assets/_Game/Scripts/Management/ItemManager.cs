@@ -25,6 +25,8 @@ namespace _Game.Scripts.Management
         private List<Item> _generatedItems = new List<Item>();
         [SerializeField, HideInInspector]
         private List<Item> _activeItems = new List<Item>();
+        public List<Item> ActiveItems { get => _activeItems; private set => _activeItems = value; }
+
         [SerializeField, HideInInspector]
         private List<Item> _activeRequiredItems = new List<Item>();
         [SerializeField, HideInInspector]
@@ -61,6 +63,7 @@ namespace _Game.Scripts.Management
         private string _itemRecycleClipKey = "ItemRecycle";
         [SerializeField, Tooltip("")]
         private string _itemDestroyClipKey = "ItemDestroy";
+
 
         private void Start()
         {

@@ -1,5 +1,7 @@
 using _Game.Scripts._helpers;
+using _Game.Scripts.Items;
 using DG.Tweening;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace _Game.Scripts.Management
@@ -18,14 +20,24 @@ namespace _Game.Scripts.Management
         [Header("Item Shaker Settings")]
         [Tooltip("Button to trigger the Item Shaker skill.")]
         [SerializeField] private LeafButton _itemShakerButton;
-        [Tooltip("Transform to shake during the Item Shaker skill.")]
-        [SerializeField] private Transform _itemShaker;
-        [Tooltip("Duration of the vertical movement during the shake.")]
-        [SerializeField, Range(0.1f, 1f)] private float _shakerMovementDuration = 0.5f;
-        [Tooltip("Duration of the rotation during the shake.")]
-        [SerializeField, Range(0.1f, 1f)] private float _shakerRotationDuration = 0.5f;
-        [Tooltip("Height change amount during the shake.")]
-        [SerializeField, Range(0.1f, 5f)] private float _shakerHeightChangeAmount = 2f;
+
+        [SerializeField, Tooltip("The minimum force applied in the upward direction (y-axis).")]
+        private float _minUpwardForce = 5f;
+
+        [SerializeField, Tooltip("The maximum force applied in the upward direction (y-axis).")]
+        private float _maxUpwardForce = 10f;
+
+        [SerializeField, Tooltip("The minimum force applied in the positive X and Z directions.")]
+        private float _minHorizontalForce = 2f;
+
+        [SerializeField, Tooltip("The maximum force applied in the positive X and Z directions.")]
+        private float _maxHorizontalForce = 5f;
+
+        [SerializeField, Tooltip("The minimum force applied in the positive X and Z directions.")]
+        private float _minVerticalForce = 2f;
+
+        [SerializeField, Tooltip("The maximum force applied in the positive X and Z directions.")]
+        private float _maxVerticalForce = 5f;
 
         [Header("Recycle Item Settings")]
         [Tooltip("Button to trigger the Recycle Item skill.")]
@@ -36,10 +48,15 @@ namespace _Game.Scripts.Management
         [SerializeField] private LeafButton _freezeTimeButton;
         [Tooltip("Duration for which the time is frozen.")]
         [SerializeField, Range(1f, 20f)] private float _timeFreezeDuration = 10f;
+
+        [Header("Effect Settings")]
+        [Header("Audio Settings")]
         [SerializeField, Tooltip("")]
         private string _freezeEffectParticleKey = "Freeze";
         [SerializeField, Tooltip("")]
         private string _itemShakerParticleKey = "ItemShaker";
+
+        [Header("Particle Settings")]
         [SerializeField, Tooltip("")]
         private string _freezeEffectClipKey = "Freeze";
         [SerializeField, Tooltip("")]
@@ -77,24 +94,22 @@ namespace _Game.Scripts.Management
         {
             Debug.Log("ItemShaker skill activated.");
 
-            // Create a sequence for the shaking animation
-            Sequence shakerSequence = DOTween.Sequence();
+            List<Item> itemList = GlobalBinder.singleton.ItemManager.ActiveItems;
 
-            shakerSequence.Append(_itemShaker.DOMoveY(_itemShaker.position.y + _shakerHeightChangeAmount,
-                _shakerMovementDuration).SetEase(Ease.Linear));
-            shakerSequence.AppendCallback(() =>
+            foreach (Item item in itemList)
             {
-                GlobalBinder.singleton.ParticleManager.PlayParticleAtPoint(_itemShakerParticleKey,
-                    Vector3.up * 2 + Vector3.forward);
+                Rigidbody itemRigidbody = item.GetComponent<Rigidbody>();
+                if (itemRigidbody != null)
+                {
+                    Vector3 randomForce = new Vector3(
+                        Random.Range(_minHorizontalForce, _maxHorizontalForce),
+                        Random.Range(_minUpwardForce, _maxUpwardForce),
+                        Random.Range(_minVerticalForce, _maxVerticalForce)
+                    );
 
-                GlobalBinder.singleton.AudioManager.PlaySound(_itemShakerClipKey);
-            });
-            shakerSequence.Join(_itemShaker.DORotate(new Vector3(0, 360, 0),
-                _shakerRotationDuration, RotateMode.LocalAxisAdd).SetEase(Ease.Linear));
-            shakerSequence.Append(_itemShaker.DOMoveY(_itemShaker.position.y,
-                _shakerMovementDuration).SetEase(Ease.Linear));
-            shakerSequence.Join(_itemShaker.DORotate(new Vector3(0, 360, 0),
-                _shakerRotationDuration, RotateMode.LocalAxisAdd).SetEase(Ease.Linear));
+                    itemRigidbody.AddForce(randomForce, ForceMode.Impulse);
+                }
+            }
         }
 
         /// <summary>
