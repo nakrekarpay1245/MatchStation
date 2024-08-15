@@ -4,28 +4,45 @@ using UnityEngine.Audio;
 
 namespace _Game.Scripts._helpers
 {
+    /// <summary>
+    /// Manages the playing of audio clips using a pool of AudioSources.
+    /// </summary>
     public class AudioManager : MonoBehaviour
     {
-        private List<AudioSource> _audioSources = new List<AudioSource>();
-
         [Header("Audio Manager Parameters")]
+        [Tooltip("List of audio configurations.")]
         [SerializeField]
         private List<Audio> _audioList = new List<Audio>();
-        [Space]
-        [SerializeField]
+
+        [Tooltip("Maximum number of AudioSource components to manage.")]
+        [SerializeField, Range(1, 20)]
         private int _maximumAudioCount = 10;
-        [SerializeField]
+
+        [Tooltip("Master volume for all audio.")]
+        [SerializeField, Range(0f, 1f)]
         private float _masterVolume = 1f;
+
+        [Tooltip("Mute all audio sources.")]
         [SerializeField]
         private bool _isAudioSourceMuted = false;
 
         [Header("Audio Mixer")]
         [Tooltip("Audio mixer group for sound effects.")]
-        [SerializeField] private AudioMixerGroup _soundMixerGroup;
+        [SerializeField]
+        private AudioMixerGroup _soundMixerGroup;
+
+        private readonly List<AudioSource> _audioSources = new List<AudioSource>();
 
         private void Awake()
         {
-            // AudioSource componentlerini oluþtur
+            InitializeAudioSources();
+        }
+
+        /// <summary>
+        /// Initializes the AudioSource components.
+        /// </summary>
+        private void InitializeAudioSources()
+        {
             for (int i = 0; i < _maximumAudioCount; i++)
             {
                 AudioSource newSource = gameObject.AddComponent<AudioSource>();
@@ -35,114 +52,103 @@ namespace _Game.Scripts._helpers
         }
 
         /// <summary>
-        /// Plays an audio clip with the given name, volume, and loop setting, using an available AudioSource.
-        /// If no AudioSource is available, logs a warning message and returns without playing the
+        /// Plays an audio clip by name with specified volume and loop settings.
         /// </summary>
-        /// <param name="clipName"></param>
-        /// <param name="volume"></param>
-        /// <param name="loop"></param>
+        /// <param name="clipName">The name of the audio clip to play.</param>
+        /// <param name="volume">Volume level for this instance.</param>
+        /// <param name="loop">Whether the audio should loop.</param>
         public void PlaySound(string clipName, float volume = 1f, bool loop = false)
         {
-            // Find audio source which is not playing
-            AudioSource activeSource = null;
-            for (int i = 0; i < _audioSources.Count; i++)
-            {
-                if (!_audioSources[i].isPlaying)
-                {
-                    activeSource = _audioSources[i];
-                    break;
-                }
-            }
+            Audio audio = GetAudioByName(clipName);
+            if (audio == null) return;
 
-            if (activeSource == null)
+            AudioSource source = GetAvailableAudioSource();
+            if (source == null)
             {
-                Debug.LogWarning("There is no any other audioSource");
+                Debug.LogWarning("No available AudioSource to play sound.");
                 return;
             }
 
-            for (int i = 0; i < _audioList.Count; i++)
-            {
-                if (clipName == _audioList[i].Name)
-                {
-                    activeSource.mute = _isAudioSourceMuted;
-
-                    activeSource.clip = _audioList[i].Clip;
-                    //activeSource.volume = masterVolume * soundList[i].Volume;
-                    activeSource.volume = _masterVolume * volume;
-                    activeSource.loop = _audioList[i].Loop;
-                    activeSource.Play();
-                }
-            }
+            ConfigureAndPlayAudioSource(source, audio, volume, loop);
         }
 
         /// <summary>
-        /// Plays an audio clip with the given name, volume, and loop setting, using an available AudioSource.
-        /// If no AudioSource is available, logs a warning message and returns without playing the
+        /// Plays an audio clip by name with default settings.
         /// </summary>
-        /// <param name="clipName"></param>
+        /// <param name="clipName">The name of the audio clip to play.</param>
         public void PlaySound(string clipName)
         {
-            // Find audio source which is not playing
-            AudioSource activeSource = null;
-            for (int i = 0; i < _audioSources.Count; i++)
-            {
-                if (!_audioSources[i].isPlaying)
-                {
-                    activeSource = _audioSources[i];
-                    break;
-                }
-            }
-
-            if (activeSource == null)
-            {
-                Debug.LogWarning("There is no any other audioSource");
-                return;
-            }
-
-            for (int i = 0; i < _audioList.Count; i++)
-            {
-                if (clipName == _audioList[i].Name)
-                {
-                    activeSource.mute = _isAudioSourceMuted;
-
-                    activeSource.clip = _audioList[i].Clip;
-                    activeSource.Play();
-                }
-            }
+            PlaySound(clipName, 1f, false);
         }
 
         /// <summary>
-        /// Plays an audio clip with the given clip reference, volume, and loop setting, using an available AudioSource.
-        /// If no AudioSource is available, logs a warning message and returns without playing the   
-        /// /// </summary>
-        /// <param name="clip"></param>
-        /// <param name="volume"></param>
-        /// <param name="loop"></param>
+        /// Plays a specific audio clip with specified volume and loop settings.
+        /// </summary>
+        /// <param name="clip">The AudioClip to play.</param>
+        /// <param name="volume">Volume level for this instance.</param>
+        /// <param name="loop">Whether the audio should loop.</param>
         public void PlaySound(AudioClip clip, float volume = 1f, bool loop = false)
         {
-            // Find audio source which is not playing
-            AudioSource activeSource = null;
-            for (int i = 0; i < _audioSources.Count; i++)
+            AudioSource source = GetAvailableAudioSource();
+            if (source == null)
             {
-                if (!_audioSources[i].isPlaying)
-                {
-                    activeSource = _audioSources[i];
-                    break;
-                }
-            }
-
-            if (activeSource == null)
-            {
-                Debug.LogWarning("There is no any other audioSource");
+                Debug.LogWarning("No available AudioSource to play sound.");
                 return;
             }
 
-            activeSource.mute = _isAudioSourceMuted;
+            ConfigureAndPlayAudioSource(source, clip, volume, loop);
+        }
 
-            activeSource.clip = clip;
-            activeSource.volume = _masterVolume * volume;
-            activeSource.loop = loop;
-            activeSource.Play();
+        /// <summary>
+        /// Retrieves an audio configuration by name.
+        /// </summary>
+        /// <param name="clipName">The name of the audio clip.</param>
+        /// <returns>The Audio object with the specified name, or null if not found.</returns>
+        private Audio GetAudioByName(string clipName)
+        {
+            return _audioList.Find(audio => audio.Name == clipName);
+        }
+
+        /// <summary>
+        /// Retrieves the first available AudioSource that is not currently playing.
+        /// </summary>
+        /// <returns>An available AudioSource, or null if none are available.</returns>
+        private AudioSource GetAvailableAudioSource()
+        {
+            return _audioSources.Find(source => !source.isPlaying);
+        }
+
+        /// <summary>
+        /// Configures an AudioSource and plays the specified audio.
+        /// </summary>
+        /// <param name="source">The AudioSource to configure.</param>
+        /// <param name="audio">The Audio object containing the clip and settings.</param>
+        /// <param name="volume">The volume level to apply.</param>
+        /// <param name="loop">Whether the audio should loop.</param>
+        private void ConfigureAndPlayAudioSource(AudioSource source, Audio audio, float volume, bool loop)
+        {
+            source.clip = audio.Clip;
+            source.volume = _masterVolume * volume * audio.Volume;
+            source.pitch = audio.Pitch;
+            source.loop = loop;
+            source.mute = _isAudioSourceMuted;
+            source.Play();
+        }
+
+        /// <summary>
+        /// Configures an AudioSource and plays the specified AudioClip.
+        /// </summary>
+        /// <param name="source">The AudioSource to configure.</param>
+        /// <param name="clip">The AudioClip to play.</param>
+        /// <param name="volume">The volume level to apply.</param>
+        /// <param name="loop">Whether the audio should loop.</param>
+        private void ConfigureAndPlayAudioSource(AudioSource source, AudioClip clip, float volume, bool loop)
+        {
+            source.clip = clip;
+            source.volume = _masterVolume * volume;
+            source.loop = loop;
+            source.mute = _isAudioSourceMuted;
+            source.Play();
         }
     }
 }
