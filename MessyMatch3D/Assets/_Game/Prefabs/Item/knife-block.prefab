@@ -158,8 +158,8 @@ MonoBehaviour:
   _itemPositionOffset: {x: 0, y: 1, z: 0}
   _itemCollectRotation: {x: 0, y: 90, z: 90}
   _itemNormalScaleMultiplier: 2
-  _itemSelectedMultiplier: 2.5
-  _itemCollectedScaleMultiplier: 0.75
+  _itemSelectedMultiplier: 3
+  _itemCollectedScaleMultiplier: 1.5
   _itemScaleChangeDuration: 0.2
   _itemCollectParticleKey: ItemCollect
   _itemCollectClipKey: ItemCollect

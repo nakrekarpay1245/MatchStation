@@ -137,8 +137,6 @@ namespace _Game.Scripts.Items
             //Debug.Log(name + "Selected!");
             // Apply a scale effect using DOTween
             transform.DOScale(Vector3.one * _itemSelectedMultiplier, _itemScaleChangeDuration); // Scale up 
-
-            GetComponent<Renderer>().material.SetFloat("_OutlineWidth", 1f);
         }
 
         public void DeSelect()
@@ -146,8 +144,6 @@ namespace _Game.Scripts.Items
             //Debug.Log(name + "DeSelected!");
             // Apply a scale effect using DOTween
             transform.DOScale(Vector3.one * _itemNormalScaleMultiplier, _itemScaleChangeDuration); // Scale back to original
-
-            GetComponent<Renderer>().material.SetFloat("_OutlineWidth", 0f);
         }
 
         public void Collect()
@@ -161,8 +157,6 @@ namespace _Game.Scripts.Items
             {
                 _rigidbody.isKinematic = true;
             });
-
-            GetComponent<Renderer>().material.SetFloat("_OutlineWidth", 0f);
         }
 
         public void Recycle()
