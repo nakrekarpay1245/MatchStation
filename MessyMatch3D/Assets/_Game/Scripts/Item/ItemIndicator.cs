@@ -1,3 +1,4 @@
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,6 +18,14 @@ namespace _Game.Scripts.Items
         [Tooltip("The text component displaying the quantity.")]
         [SerializeField]
         private TextMeshProUGUI _quantityText;
+
+        [Header("Scale Effects Parameters")]
+        [Tooltip("")]
+        [SerializeField]
+        private float _scaleEffectDuration = 0.5f;
+        [Tooltip("")]
+        [SerializeField]
+        private float _scalePopAmount = 1f;
 
         private int _quantity;
 
@@ -51,13 +60,26 @@ namespace _Game.Scripts.Items
         /// </summary>
         public void DecreaseQuantity()
         {
+            _quantity--;
+
             if (_quantity > 0)
             {
-                _quantity--;
                 if (_quantityText != null)
                 {
                     _quantityText.text = _quantity.ToString();
                 }
+
+                transform.DOPunchScale(Vector3.one * _scalePopAmount, _scaleEffectDuration, 5, 0.1f).OnComplete(() =>
+                {
+                    transform.DOScale(1, 0f);
+                });
+            }
+            else
+            {
+                transform.DOScale(0, _scaleEffectDuration).OnComplete(() =>
+                {
+                    gameObject.SetActive(false);
+                });
             }
         }
     }

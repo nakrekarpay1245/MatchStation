@@ -167,6 +167,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _itemIcon: {fileID: 8517576448899147366}
   _quantityText: {fileID: 1232227910466466350}
+  _scaleEffectDuration: 0.5
+  _scalePopAmount: 1
 --- !u!1 &8978607374023092296
 GameObject:
   m_ObjectHideFlags: 0
