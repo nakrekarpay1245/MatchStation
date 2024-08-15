@@ -16,7 +16,7 @@ MonoBehaviour:
   UpdateInterval: 1
   CriticalTimeThreshold: 10
   ItemDataList:
-  - ItemPrefab: {fileID: 1602869371358399659, guid: 9ec17b38a779b8c4b9f102478ee7c11d,
+  - ItemPrefab: {fileID: 7150029922247566298, guid: ba25b19150d57614987475a9e29766fe,
       type: 3}
     ItemCount: 6
     IsRequired: 1

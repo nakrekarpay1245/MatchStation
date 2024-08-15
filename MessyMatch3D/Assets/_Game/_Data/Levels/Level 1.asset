@@ -24,7 +24,7 @@ MonoBehaviour:
       type: 3}
     ItemCount: 3
     IsRequired: 1
-  - ItemPrefab: {fileID: 8128398450548616519, guid: d3f788c2c74109945af72f57e40790eb,
+  - ItemPrefab: {fileID: 2632110552028126876, guid: a75e5626673840d4399e54dcebd9b3f6,
       type: 3}
     ItemCount: 3
     IsRequired: 1
