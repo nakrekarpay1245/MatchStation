@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using DG.Tweening;
 using System.Linq;
 using _Game.Scripts._helpers;
 using _Game.Scripts.Data;
@@ -69,13 +68,13 @@ namespace _Game.Scripts.Management
 
         private void Start()
         {
-            StartCoroutine(SpawnItemsRoutine());
+            SpawnItemsRoutine();
         }
 
         /// <summary>
         /// Coroutine that spawns items at intervals, ensuring the total number matches the configuration.
         /// </summary>
-        private IEnumerator SpawnItemsRoutine()
+        private void SpawnItemsRoutine()
         {
             var itemCreationTracker = _gameData.CurrentLevel.ItemDataList.
                 ToDictionary(itemData => itemData, itemData => 0);
@@ -88,8 +87,6 @@ namespace _Game.Scripts.Management
                 var itemData = GetRandomAvailableItemData(itemCreationTracker);
                 CreateItem(itemData, itemCreationTracker[itemData] + 1);
                 itemCreationTracker[itemData]++;
-
-                yield return new WaitForSeconds(_itemCreationInterval);
             }
 
             CategorizeItems();

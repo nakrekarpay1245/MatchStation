@@ -171,9 +171,8 @@ namespace _Game.Scripts.Items
         /// </summary>
         private void UpdateItemPosition()
         {
-            if (_itemTile == null) return;
-
-            Vector3 itemPosition = _itemTile.transform.position + _itemPositionOffset;
+            Vector3 itemPosition = _itemTile ? _itemTile.transform.position + _itemPositionOffset :
+                Vector3.zero;
             Vector3 itemRotation = _itemCollectRotation;
 
             transform.DOMove(itemPosition, _itemMoveDuration);
