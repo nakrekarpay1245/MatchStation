@@ -1455,6 +1455,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9683254f8036744b9449e510b96399a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fpsText: {fileID: 0}
+  smoothingFactor: 0.1
 --- !u!1001 &359360888
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2200,13 +2202,13 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2123970375}
-  - {fileID: 755733575}
-  - {fileID: 2028953738}
   - {fileID: 767483035}
   - {fileID: 1844991211}
-  - {fileID: 1738542251}
   - {fileID: 403474424}
+  - {fileID: 2028953738}
+  - {fileID: 1738542251}
+  - {fileID: 755733575}
+  - {fileID: 2123970375}
   - {fileID: 225116188}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4986,14 +4988,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76308da1d24a3b14f9f5e90643d1d9b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AudioManager: {fileID: 767483034}
-  ItemManager: {fileID: 1844991212}
-  LevelManager: {fileID: 403474425}
-  ParticleManager: {fileID: 2028953737}
-  PopUpTextManager: {fileID: 0}
-  TileManager: {fileID: 1738542252}
-  TimeManager: {fileID: 755733574}
-  UIManager: {fileID: 2123970376}
+  _audioManager: {fileID: 767483034}
+  _itemManager: {fileID: 1844991212}
+  _levelManager: {fileID: 403474425}
+  _particleManager: {fileID: 2028953737}
+  _tileManager: {fileID: 1738542252}
+  _timeManager: {fileID: 755733574}
+  _uiManager: {fileID: 2123970376}
 --- !u!4 &1927993579
 Transform:
   m_ObjectHideFlags: 0

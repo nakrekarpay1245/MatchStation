@@ -73,7 +73,7 @@ namespace _Game.Scripts.Management
 
                     // Set up the indicator
                     itemIndicator.SetIcon(itemData.ItemPrefab.ItemIcon);
-                    itemIndicator.SetText(itemData.ItemCount.ToString());
+                    itemIndicator.SetQuantity(itemData.ItemCount);
 
                     // Store the indicator by item ID
                     _itemIndicators[itemData.ItemPrefab.ItemId] = itemIndicator;
