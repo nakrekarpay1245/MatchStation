@@ -148,7 +148,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -6538903991835684241, guid: 86a732b94bd623f4b8895ea49fd4115b, type: 3}
+  - {fileID: 2100000, guid: 4dab46c3bbd020d49b4e4f3299991c10, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -237,9 +237,10 @@ MonoBehaviour:
   _itemTile: {fileID: 0}
   _itemMoveDuration: 0.5
   _itemPositionOffset: {x: 0, y: 1, z: 0}
-  _itemNormalScaleMultiplier: 1
-  _itemSelectedMultiplier: 1.25
-  _itemCollectedScaleMultiplier: 0.5
+  _itemCollectRotation: {x: 0, y: 90, z: 90}
+  _itemNormalScaleMultiplier: 2
+  _itemSelectedMultiplier: 2.5
+  _itemCollectedScaleMultiplier: 0.75
   _itemScaleChangeDuration: 0.2
   _itemCollectParticleKey: ItemCollect
   _itemCollectClipKey: ItemCollect

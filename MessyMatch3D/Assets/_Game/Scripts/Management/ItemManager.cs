@@ -36,6 +36,12 @@ namespace _Game.Scripts.Management
         [SerializeField, Tooltip("Time interval between creating each item."), Range(0.001f, 0.1f)]
         private float _itemCreationInterval = 0.1f;
 
+        [SerializeField, Tooltip("The minimum rotation values (x, y, z) for the randomly generated item.")]
+        private Vector3 _minRotation = new Vector3(0f, 0f, 0f);
+
+        [SerializeField, Tooltip("The maximum rotation values (x, y, z) for the randomly generated item.")]
+        private Vector3 _maxRotation = new Vector3(360f, 360f, 360f);
+
         [Header("Spawn Area Settings")]
         [SerializeField, Tooltip("Minimum and maximum spawn positions on the horizontal axis.")]
         private Vector2 _horizontalSpawnRange = new Vector2(-5f, 5f);
@@ -66,9 +72,11 @@ namespace _Game.Scripts.Management
         /// </summary>
         private IEnumerator SpawnItemsRoutine()
         {
-            var itemCreationTracker = _gameData.CurrentLevel.ItemDataList.ToDictionary(itemData => itemData, itemData => 0);
+            var itemCreationTracker = _gameData.CurrentLevel.ItemDataList.
+                ToDictionary(itemData => itemData, itemData => 0);
 
-            int totalItemsToCreate = _gameData.CurrentLevel.ItemDataList.Sum(itemData => GetValidatedItemCount(itemData.ItemCount));
+            int totalItemsToCreate = _gameData.CurrentLevel.ItemDataList.
+                Sum(itemData => GetValidatedItemCount(itemData.ItemCount));
 
             for (int i = 0; i < totalItemsToCreate; i++)
             {
@@ -108,9 +116,8 @@ namespace _Game.Scripts.Management
 
             return randomItemData;
         }
-
         /// <summary>
-        /// Spawns an item and assigns it a unique name, then adds it to the active list.
+        /// Spawns an item with a random rotation and assigns it a unique name, then adds it to the active list.
         /// </summary>
         /// <param name="itemData">Data of the item to create.</param>
         /// <param name="itemNumber">Item's number in the current set.</param>
@@ -122,14 +129,17 @@ namespace _Game.Scripts.Management
                 Random.Range(_verticalSpawnRange.x, _verticalSpawnRange.y)
             );
 
-            Item newItem = Instantiate(itemData.ItemPrefab, spawnPosition, Quaternion.identity, transform);
+            Quaternion randomRotation = Quaternion.Euler(
+                Random.Range(_minRotation.x, _maxRotation.x),
+                Random.Range(_minRotation.y, _maxRotation.y),
+                Random.Range(_minRotation.z, _maxRotation.z)
+            );
+
+            Item newItem = Instantiate(itemData.ItemPrefab, spawnPosition, randomRotation, transform);
             newItem.name = $"{itemData.ItemPrefab.GetType().Name}_{itemNumber}";
 
             _generatedItems.Add(newItem);
             _activeItems.Add(newItem);
-
-            // Animate item creation with DOTween
-            newItem.transform.DOScale(Vector3.one, _itemCreationInterval).SetEase(Ease.OutBack);
         }
 
         /// <summary>

@@ -32,7 +32,7 @@ MonoBehaviour:
       type: 3}
     ItemCount: 6
     IsRequired: 0
-  - ItemPrefab: {fileID: 6798243834001623316, guid: 40de674fa46c33b4d8b531225b9434f9,
+  - ItemPrefab: {fileID: 7113131527863176753, guid: 5fb7125c3253e0a4cb31246e77a2e97c,
       type: 3}
     ItemCount: 6
     IsRequired: 0

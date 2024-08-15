@@ -65,6 +65,7 @@ namespace _Game.Scripts.Items
             {
                 _itemTile = value;
                 Vector3 itemPosition = _itemTile ? _itemTile.transform.position : Vector3.zero;
+                Vector3 itemRotation = _itemTile ? _itemCollectRotation : Vector3.zero;
 
                 if (IsCollectable)
                 {
@@ -76,7 +77,7 @@ namespace _Game.Scripts.Items
 
                 transform.DOMove(itemPosition + _itemPositionOffset, _itemMoveDuration);
 
-                transform.DORotate(Vector3.zero, _itemMoveDuration);
+                transform.DORotate(itemRotation, _itemMoveDuration);
             }
         }
 
@@ -92,7 +93,13 @@ namespace _Game.Scripts.Items
         [Header("Scale Parameters")]
         [Tooltip("")]
         [SerializeField]
+        private Vector3 _itemCollectRotation = new Vector3(0f, 90f, 90f);
+
+        [Header("Scale Parameters")]
+        [Tooltip("")]
+        [SerializeField]
         private float _itemNormalScaleMultiplier = 1f;
+        public float ItemGenerateScaleMultiplier => _itemNormalScaleMultiplier;
         [Tooltip("")]
         [SerializeField]
         private float _itemSelectedMultiplier = 1.25f;
@@ -119,6 +126,7 @@ namespace _Game.Scripts.Items
         private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody>();
+            transform.localScale = Vector3.one * _itemNormalScaleMultiplier;
         }
 
         /// <summary>
