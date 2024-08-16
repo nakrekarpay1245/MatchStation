@@ -16,7 +16,7 @@ In **Match Station**, players are challenged to match three identical items from
 
 ## Gameplay Video
 
-[Watch the Gameplay Video](URL_TO_YOUR_GAMEPLAY_VIDEO)
+[Watch the Gameplay Video](https://www.youtube.com/watch?v=du_ytklzoSc)
 
 ## Screenshots
 
