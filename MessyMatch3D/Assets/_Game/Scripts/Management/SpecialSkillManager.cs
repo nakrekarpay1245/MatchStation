@@ -1,65 +1,56 @@
 using _Game.Scripts._helpers;
 using _Game.Scripts.Items;
-using DG.Tweening;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace _Game.Scripts.Management
 {
     /// <summary>
-    /// Manages special skills in the game, including destroying items, shaking items, recycling items, and freezing time.
+    /// Manages special skills in the game, including destroying items, shaking items, recycling items,
+    /// and freezing time.
     /// Each skill is triggered by corresponding buttons.
     /// </summary>
     public class SpecialSkillManager : MonoBehaviour
     {
-        [Header("Leaf Buttons")]
-        [Header("Destroy Triple Item Settings")]
-        [Tooltip("Button to trigger the Destroy Triple Item skill.")]
-        [SerializeField] private LeafButton _destroyTripleItemButton;
+        [Header("Skill Buttons")]
+        [SerializeField, Tooltip("Button to trigger the Destroy Triple Item skill.")]
+        private LeafButton _destroyTripleItemButton;
+
+        [SerializeField, Tooltip("Button to trigger the Item Shaker skill.")]
+        private LeafButton _itemShakerButton;
+
+        [SerializeField, Tooltip("Button to trigger the Recycle Item skill.")]
+        private LeafButton _recycleItemButton;
+
+        [SerializeField, Tooltip("Button to trigger the Freeze Time skill.")]
+        private LeafButton _freezeTimeButton;
 
         [Header("Item Shaker Settings")]
-        [Tooltip("Button to trigger the Item Shaker skill.")]
-        [SerializeField] private LeafButton _itemShakerButton;
-
         [SerializeField, Tooltip("The minimum force applied in the upward direction (y-axis).")]
         private float _minUpwardForce = 5f;
-
         [SerializeField, Tooltip("The maximum force applied in the upward direction (y-axis).")]
         private float _maxUpwardForce = 10f;
-
         [SerializeField, Tooltip("The minimum force applied in the positive X and Z directions.")]
         private float _minHorizontalForce = 2f;
-
         [SerializeField, Tooltip("The maximum force applied in the positive X and Z directions.")]
         private float _maxHorizontalForce = 5f;
-
-        [SerializeField, Tooltip("The minimum force applied in the positive X and Z directions.")]
+        [SerializeField, Tooltip("The minimum force applied in the positive Y direction.")]
         private float _minVerticalForce = 2f;
-
-        [SerializeField, Tooltip("The maximum force applied in the positive X and Z directions.")]
+        [SerializeField, Tooltip("The maximum force applied in the positive Y direction.")]
         private float _maxVerticalForce = 5f;
 
-        [Header("Recycle Item Settings")]
-        [Tooltip("Button to trigger the Recycle Item skill.")]
-        [SerializeField] private LeafButton _recycleItemButton;
-
         [Header("Freeze Time Settings")]
-        [Tooltip("Button to trigger the Freeze Time skill.")]
-        [SerializeField] private LeafButton _freezeTimeButton;
-        [Tooltip("Duration for which the time is frozen.")]
-        [SerializeField, Range(1f, 20f)] private float _timeFreezeDuration = 10f;
+        [SerializeField, Range(1f, 20f), Tooltip("Duration for which the time is frozen.")]
+        private float _timeFreezeDuration = 10f;
 
-        [Header("Effect Settings")]
-        [Header("Audio Settings")]
-        [SerializeField, Tooltip("")]
+        [Header("Particle and Audio Settings")]
+        [SerializeField, Tooltip("Key for the freeze effect particle.")]
         private string _freezeEffectParticleKey = "Freeze";
-        [SerializeField, Tooltip("")]
+        [SerializeField, Tooltip("Key for the item shaker particle.")]
         private string _itemShakerParticleKey = "ItemShaker";
-
-        [Header("Particle Settings")]
-        [SerializeField, Tooltip("")]
+        [SerializeField, Tooltip("Audio clip key for freeze effect.")]
         private string _freezeEffectClipKey = "Freeze";
-        [SerializeField, Tooltip("")]
+        [SerializeField, Tooltip("Audio clip key for item shaker effect.")]
         private string _itemShakerClipKey = "ItemShaker";
 
         private void Awake()
@@ -72,42 +63,40 @@ namespace _Game.Scripts.Management
         /// </summary>
         private void InitializeButtons()
         {
-            _destroyTripleItemButton.OnPressed.AddListener(DestroyTripleItem);
-            _itemShakerButton.OnPressed.AddListener(ItemShaker);
-            _recycleItemButton.OnPressed.AddListener(RecycleItem);
-            _freezeTimeButton.OnPressed.AddListener(FreezeTime);
+            _destroyTripleItemButton.OnPressed.AddListener(OnDestroyTripleItem);
+            _itemShakerButton.OnPressed.AddListener(OnItemShaker);
+            _recycleItemButton.OnPressed.AddListener(OnRecycleItem);
+            _freezeTimeButton.OnPressed.AddListener(OnFreezeTime);
         }
 
         /// <summary>
         /// Destroys up to three items of the same type on the board.
         /// </summary>
-        private void DestroyTripleItem()
+        private void OnDestroyTripleItem()
         {
             GlobalBinder.singleton.ItemManager.DeactivateRandomRequiredItems();
             Debug.Log("DestroyTripleItem skill activated.");
         }
 
         /// <summary>
-        /// Shakes the items on the board by moving and rotating the specified transform.
+        /// Shakes the items on the board by applying random forces to their rigidbodies.
         /// </summary>
-        private void ItemShaker()
+        private void OnItemShaker()
         {
             Debug.Log("ItemShaker skill activated.");
+            List<Item> items = GlobalBinder.singleton.ItemManager.ActiveItems;
 
-            List<Item> itemList = GlobalBinder.singleton.ItemManager.ActiveItems;
-
-            foreach (Item item in itemList)
+            foreach (Item item in items)
             {
-                Rigidbody itemRigidbody = item.GetComponent<Rigidbody>();
-                if (itemRigidbody != null)
+                Rigidbody rb = item.GetComponent<Rigidbody>();
+                if (rb != null)
                 {
-                    Vector3 randomForce = new Vector3(
+                    Vector3 force = new Vector3(
                         Random.Range(_minHorizontalForce, _maxHorizontalForce),
                         Random.Range(_minUpwardForce, _maxUpwardForce),
                         Random.Range(_minVerticalForce, _maxVerticalForce)
                     );
-
-                    itemRigidbody.AddForce(randomForce, ForceMode.Impulse);
+                    rb.AddForce(force, ForceMode.Impulse);
                 }
             }
         }
@@ -115,24 +104,24 @@ namespace _Game.Scripts.Management
         /// <summary>
         /// Recycles the last collected item, placing it back on the board.
         /// </summary>
-        private void RecycleItem()
+        private void OnRecycleItem()
         {
             Debug.Log("RecycleItem skill activated.");
             GlobalBinder.singleton.ItemManager.RecycleLastCollectedItem();
         }
 
         /// <summary>
-        /// Freezes the game timer for a specified duration, stopping all item movements.
+        /// Freezes the game timer for a specified duration, stopping all item movements and playing
+        /// associated effects.
         /// </summary>
-        private void FreezeTime()
+        private void OnFreezeTime()
         {
             Debug.Log("FreezeTime skill activated.");
             GlobalBinder.singleton.TimeManager.FreezeTimer(_timeFreezeDuration);
             GlobalBinder.singleton.UIManager.ActivateFreezeScreen(_timeFreezeDuration, 1f, 1f);
 
-            GlobalBinder.singleton.ParticleManager.PlayParticleAtPoint(_freezeEffectParticleKey,
+            GlobalBinder.singleton.ParticleManager.PlayParticleAtPoint(_freezeEffectParticleKey, 
                 Vector2.up * 2);
-
             GlobalBinder.singleton.AudioManager.PlaySound(_freezeEffectClipKey);
         }
     }
