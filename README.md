@@ -4,6 +4,11 @@
 
 **Match Station** is an engaging Match-3 puzzle game where players match and collect specific items across various levels. The objective is to find and match three identical items from a grid of randomly scattered objects, focusing on collecting certain required item types to succeed.
 
+## Screenshots
+
+| ![Screenshot 1](Assets/ScreenShoots/Level_3.png) | ![Screenshot 2](Assets/ScreenShoots/Level_5.png) | ![Screenshot 3](Assets/ScreenShoots/MainMenu.png) |
+|:------------------------------------:|:------------------------------------:|:------------------------------------:|
+
 ## Gameplay
 
 In **Match Station**, players are challenged to match three identical items from a grid. Each level specifies particular item types that must be collected, and the game features 7 tiles where collected items are displayed. Players must match items to fill these tiles, and failing to do so results in a level failure. Successfully collecting all required items allows progression to the next level.
@@ -16,12 +21,14 @@ In **Match Station**, players are challenged to match three identical items from
 
 ## Gameplay Video
 
-[![Gameplay Video](https://img.youtube.com/vi/du_ytklzoSc/0.jpg)](https://www.youtube.com/watch?v=du_ytklzoSc)
+[![Gameplay Video](https://img.youtube.com/vi/-yNsxpZrWdg/0.jpg)](https://youtu.be/-yNsxpZrWdg)
 
-## Screenshots
 
-| ![Screenshot 1](MessyMatch3D/Assets/ScreenShoots/Level_3.png) | ![Screenshot 2](MessyMatch3D/Assets/ScreenShoots/Level_5.png) | ![Screenshot 3](MessyMatch3D/Assets/ScreenShoots/MainMenu.png) |
-|:------------------------------------:|:------------------------------------:|:------------------------------------:|
+## WebGL Demo
+
+You can play the WebGL demo of **Match Station** here:  
+[Match Station WebGL Demo on itch.io](https://erkanyaprak.itch.io/matchstation)
+
 
 ## Technologies
 
@@ -31,14 +38,19 @@ In **Match Station**, players are challenged to match three identical items from
 
 ## Custom Tools
 
-- **ItemCreator Tool**: A custom Unity Editor tool developed to convert FBX models into item prefabs for seamless game integration.
+- **ItemCreator Tool**: A custom Unity Editor tool developed to convert FBX models into item prefabs for seamless game integration. This tool simplifies the process of creating and configuring item prefabs for use in the game by automating tasks such as setting item IDs, icons, and descriptions. It also allows developers to quickly assign and preview these prefabs within the Unity Editor, improving the workflow for adding new items to the game.
+
+### ItemCreator Tutorial Video
+
+[![ItemCreator Tutorial](https://img.youtube.com/vi/3M8tVMEeeug/0.jpg)](https://www.youtube.com/watch?v=3M8tVMEeeug)
 
 ## Assets
 
 - **3D Models**: Leveraged assets from [Kenney's Food Kit](https://kenney.nl/assets/food-kit).
+- **Particle Effects**: Leveraged assets from [Lana Studio - Hyper Casual FX](https://assetstore.unity.com/packages/vfx/particles/hyper-casual-fx-200333).
 
 ## Installation
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/match-station.git
+   git clone https://github.com/nakrekarpay1245/MatchStation
