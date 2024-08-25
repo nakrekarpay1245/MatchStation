@@ -507,14 +507,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _destroyTripleItemButton: {fileID: 867708103}
   _itemShakerButton: {fileID: 1141529502}
+  _recycleItemButton: {fileID: 1030445674}
+  _freezeTimeButton: {fileID: 2027130648}
   _minUpwardForce: 1
   _maxUpwardForce: 10
   _minHorizontalForce: -2
   _maxHorizontalForce: 2
   _minVerticalForce: 2
   _maxVerticalForce: -2
-  _recycleItemButton: {fileID: 1030445674}
-  _freezeTimeButton: {fileID: 2027130648}
   _timeFreezeDuration: 10
   _freezeEffectParticleKey: Freeze
   _itemShakerParticleKey: ItemShaker
@@ -5271,15 +5271,15 @@ MonoBehaviour:
   - ParticleName: ItemCollect
     ParticleCount: 10
     _particleSystemList:
-    - {fileID: 8653458764756402255, guid: c87a9fb9c7aca2c4a827c20a7a08a14f, type: 3}
+    - {fileID: 2219189024081856779, guid: b9e87ab25a82107488ab1276b7428cfc, type: 3}
   - ParticleName: ItemMatch
     ParticleCount: 10
     _particleSystemList:
-    - {fileID: 8653458764756402255, guid: ab59dbb6d4d17aa46ad4562dba0687e5, type: 3}
+    - {fileID: 2219189024081856779, guid: 933dc164be56e194daaac61019274f33, type: 3}
   - ParticleName: ItemRecycle
     ParticleCount: 1
     _particleSystemList:
-    - {fileID: 8375141808237169437, guid: 742b3bdcb0b7cfa4dba11e500e61165c, type: 3}
+    - {fileID: 7330638445543741582, guid: 9d11447644b0e0842a7edb034fe1ac72, type: 3}
   - ParticleName: Freeze
     ParticleCount: 1
     _particleSystemList:
@@ -5291,12 +5291,11 @@ MonoBehaviour:
   - ParticleName: Fireworks
     ParticleCount: 10
     _particleSystemList:
-    - {fileID: 6061713184971655164, guid: f917ffe61b214054e95c13b0db201347, type: 3}
-    - {fileID: 2446331556981925004, guid: 915f61401158304468282e7c00daccf1, type: 3}
+    - {fileID: 4938095755617958530, guid: 2e79f16be10fbd14f8d5ef191f8db4aa, type: 3}
   - ParticleName: ItemDestroy
     ParticleCount: 10
     _particleSystemList:
-    - {fileID: 8653458764756402255, guid: ff180a44aff4e204a8c28bc8dd00aed1, type: 3}
+    - {fileID: 6403252182692130911, guid: 59b2219a259bd2b4e830f8d61da6417e, type: 3}
   ParticleList: []
 --- !u!4 &2028953738
 Transform:
