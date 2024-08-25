@@ -58,6 +58,14 @@ namespace _Game.Scripts.Items
         [SerializeField]
         private float _itemScaleChangeDuration = 0.2f;
 
+        [Header("Materials")]
+        [Tooltip("Material when the item is selected.")]
+        [SerializeField]
+        private Material _itemSelectedMaterial;
+        [Tooltip("Material when the item is not selected.")]
+        [SerializeField]
+        private Material _itemDefaultMaterial;
+
         [Header("Effects")]
         [Tooltip("Particle effect key for when the item is collected.")]
         [SerializeField]
@@ -66,6 +74,11 @@ namespace _Game.Scripts.Items
         [Tooltip("Audio clip key for when the item is collected.")]
         [SerializeField]
         private string _itemCollectClipKey = "ItemCollect";
+
+        [Header("References")]
+        [Tooltip("Renderer component")]
+        [SerializeField]
+        private Renderer _renderer;
 
         private Rigidbody _rigidbody;
         private bool _isCollectable = true;
@@ -115,6 +128,10 @@ namespace _Game.Scripts.Items
         private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody>();
+            _renderer = GetComponent<Renderer>();
+
+            _itemDefaultMaterial = _renderer.material;
+
             ResetItemScale();
         }
 
@@ -123,6 +140,7 @@ namespace _Game.Scripts.Items
         /// </summary>
         public void Select()
         {
+            ChangeRendererMaterial(_itemSelectedMaterial);
             ApplyScaleAnimation(_itemSelectedMultiplier);
         }
 
@@ -131,7 +149,13 @@ namespace _Game.Scripts.Items
         /// </summary>
         public void DeSelect()
         {
+            ChangeRendererMaterial(_itemDefaultMaterial);
             ApplyScaleAnimation(_itemNormalScaleMultiplier);
+        }
+
+        private void ChangeRendererMaterial(Material material)
+        {
+            _renderer.material = material;
         }
 
         /// <summary>
@@ -143,6 +167,7 @@ namespace _Game.Scripts.Items
             ApplyScaleAnimation(_itemCollectedScaleMultiplier, () =>
             {
                 _rigidbody.isKinematic = true;
+                ChangeRendererMaterial(_itemDefaultMaterial);
             });
         }
 
@@ -155,6 +180,7 @@ namespace _Game.Scripts.Items
             ApplyScaleAnimation(_itemNormalScaleMultiplier, () =>
             {
                 _rigidbody.isKinematic = false;
+                ChangeRendererMaterial(_itemDefaultMaterial);
             });
         }
 

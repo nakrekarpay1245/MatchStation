@@ -159,8 +159,13 @@ MonoBehaviour:
   _itemSelectedMultiplier: 3
   _itemCollectedScaleMultiplier: 1.5
   _itemScaleChangeDuration: 0.2
+  _itemSelectedMaterial: {fileID: 2100000, guid: 900de24ae9bebda46acdf1fad711aaf8,
+    type: 2}
+  _itemDefaultMaterial: {fileID: 2100000, guid: afccf8994492a8f4d9333422a97784ae,
+    type: 2}
   _itemCollectParticleKey: ItemCollect
   _itemCollectClipKey: ItemCollect
+  _renderer: {fileID: 0}
 --- !u!1 &3589445496117036734
 GameObject:
   m_ObjectHideFlags: 0
