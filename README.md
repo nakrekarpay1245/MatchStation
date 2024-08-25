@@ -6,7 +6,7 @@
 
 ## Screenshots
 
-| ![Screenshot 1](Assets/ScreenShoots/Level_3.png) | ![Screenshot 2](Assets/ScreenShoots/Level_5.png) | ![Screenshot 3](Assets/ScreenShoots/MainMenu.png) |
+| ![Screenshot 1](Assets/ScreenShoots/Level_3.jpg) | ![Screenshot 2](Assets/ScreenShoots/Level_5.jpg) | ![Screenshot 3](Assets/ScreenShoots/MainMenu.jpg) |
 |:------------------------------------:|:------------------------------------:|:------------------------------------:|
 
 ## Gameplay
