@@ -29,9 +29,14 @@ In **Match Station**, players are challenged to match three identical items from
 - **C# Programming**: Implemented with SOLID principles and OOP for high performance and code readability.
 - **DOTween**: Used for smooth animations and transitions.
 
+  
 ## Custom Tools
 
-- **ItemCreator Tool**: A custom Unity Editor tool developed to convert FBX models into item prefabs for seamless game integration.
+- **ItemCreator Tool**: A custom Unity Editor tool developed to convert FBX models into item prefabs for seamless game integration. This tool simplifies the process of creating and configuring item prefabs for use in the game by automating tasks such as setting item IDs, icons, and descriptions. It also allows developers to quickly assign and preview these prefabs within the Unity Editor, improving the workflow for adding new items to the game.
+
+### ItemCreator Tutorial Video
+
+[![ItemCreator Tutorial](https://img.youtube.com/vi/3M8tVMEeeug/0.jpg)](https://www.youtube.com/watch?v=3M8tVMEeeug)
 
 ## Assets
 
