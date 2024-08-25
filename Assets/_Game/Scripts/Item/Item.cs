@@ -84,9 +84,13 @@ namespace _Game.Scripts.Items
         private bool _isCollectable = true;
 
         /// <summary>
-        /// Gets the unique identifier for the item.
+        /// Gets or sets the unique identifier for the item.
         /// </summary>
-        public int ItemId => _itemId;
+        public int ItemId
+        {
+            get => _itemId;
+            set => _itemId = value;
+        }
 
         /// <summary>
         /// Gets or sets the icon representing the item.

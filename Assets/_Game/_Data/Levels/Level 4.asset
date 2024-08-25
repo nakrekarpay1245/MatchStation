@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6fe52636ef11854d9343784a29f48bb, type: 3}
   m_Name: Level 4
   m_EditorClassIdentifier: 
-  InitialTime: 30
+  InitialTime: 180
   UpdateInterval: 1
   CriticalTimeThreshold: 10
   ItemDataList:
