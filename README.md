@@ -4,6 +4,11 @@
 
 **Match Station** is an engaging Match-3 puzzle game where players match and collect specific items across various levels. The objective is to find and match three identical items from a grid of randomly scattered objects, focusing on collecting certain required item types to succeed.
 
+## Screenshots
+
+| ![Screenshot 1](Assets/ScreenShoots/Level_3.png) | ![Screenshot 2](Assets/ScreenShoots/Level_5.png) | ![Screenshot 3](Assets/ScreenShoots/MainMenu.png) |
+|:------------------------------------:|:------------------------------------:|:------------------------------------:|
+
 ## Gameplay
 
 In **Match Station**, players are challenged to match three identical items from a grid. Each level specifies particular item types that must be collected, and the game features 7 tiles where collected items are displayed. Players must match items to fill these tiles, and failing to do so results in a level failure. Successfully collecting all required items allows progression to the next level.
@@ -18,18 +23,12 @@ In **Match Station**, players are challenged to match three identical items from
 
 [![Gameplay Video](https://img.youtube.com/vi/-yNsxpZrWdg/0.jpg)](https://youtu.be/-yNsxpZrWdg)
 
-## Screenshots
-
-| ![Screenshot 1](Assets/ScreenShoots/Level_3.png) | ![Screenshot 2](Assets/ScreenShoots/Level_5.png) | ![Screenshot 3](Assets/ScreenShoots/MainMenu.png) |
-|:------------------------------------:|:------------------------------------:|:------------------------------------:|
-
 ## Technologies
 
 - **Unity Engine**: Utilized for the game development environment.
 - **C# Programming**: Implemented with SOLID principles and OOP for high performance and code readability.
 - **DOTween**: Used for smooth animations and transitions.
 
-  
 ## Custom Tools
 
 - **ItemCreator Tool**: A custom Unity Editor tool developed to convert FBX models into item prefabs for seamless game integration. This tool simplifies the process of creating and configuring item prefabs for use in the game by automating tasks such as setting item IDs, icons, and descriptions. It also allows developers to quickly assign and preview these prefabs within the Unity Editor, improving the workflow for adding new items to the game.
