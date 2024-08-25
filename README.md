@@ -20,7 +20,7 @@ In **Match Station**, players are challenged to match three identical items from
 
 ## Screenshots
 
-| ![Screenshot 1](MessyMatch3D/Assets/ScreenShoots/Level_3.png) | ![Screenshot 2](MessyMatch3D/Assets/ScreenShoots/Level_5.png) | ![Screenshot 3](MessyMatch3D/Assets/ScreenShoots/MainMenu.png) |
+| ![Screenshot 1](Assets/ScreenShoots/Level_3.png) | ![Screenshot 2](Assets/ScreenShoots/Level_5.png) | ![Screenshot 3](Assets/ScreenShoots/MainMenu.png) |
 |:------------------------------------:|:------------------------------------:|:------------------------------------:|
 
 ## Technologies
@@ -41,9 +41,10 @@ In **Match Station**, players are challenged to match three identical items from
 ## Assets
 
 - **3D Models**: Leveraged assets from [Kenney's Food Kit](https://kenney.nl/assets/food-kit).
+- **Particle Effects**: Leveraged assets from [Lana Studio - Hyper Casual FX](https://assetstore.unity.com/packages/vfx/particles/hyper-casual-fx-200333).
 
 ## Installation
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/match-station.git
+   git clone https://github.com/nakrekarpay1245/MatchStation
